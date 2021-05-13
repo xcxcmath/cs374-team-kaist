@@ -1,5 +1,14 @@
 # Getting Started with Create React App
 
+## Project Due
+
+- 5/19 : Components Designs
+- 5/26 : PPT
+
+**PLEASE work on your own branch, not master**
+
+---
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts

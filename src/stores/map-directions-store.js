@@ -44,7 +44,7 @@ class MapDirectionsStore {
 
   // Directions data
   directions = [];
-  routePadding = 60;
+  routePadding = 80;
 
   error = null;
 
@@ -56,6 +56,7 @@ class MapDirectionsStore {
   constructor(accessToken) {
     makeAutoObservable(this);
     this.initialize = this.initialize.bind(this);
+    this.fetchSafeDirections = this.fetchSafeDirections.bind(this);
     this.fetchDirectionsIfPossible = this.fetchDirectionsIfPossible.bind(this);
     this.canFetch = this.canFetch.bind(this);
     this.originPoint = this.originPoint.bind(this);
@@ -100,6 +101,9 @@ class MapDirectionsStore {
     if (this.events['route'] && this.events['route'].length) {
       this.events['route'] = [];
     }
+    if (this.events['fail'] && this.events['fail'].length) {
+      this.events['fail'] = [];
+    }
     const targetCircles = {
       type: 'FeatureCollection',
       features: [
@@ -110,14 +114,15 @@ class MapDirectionsStore {
     };
     this.trial = 0;
     this.isValidRoute = false;
-    const onRoute = ({ route }) => {
+    const _onRoute = ({ route }) => {
       route.forEach((e) => {
         if (this.trial > maximumTrial) {
           onFail();
-          this.eventUnsubscribe('route', onRoute);
+          this.events['route'] = [];
+          this.events['fail'] = [];
           return;
         }
-        console.log(this.trial);
+        //console.log(this.trial);
         const routeLine = polyline.toGeoJSON(e.geometry);
         const bbox = turf.bbox(routeLine);
         const polygon = turf.bboxPolygon(bbox);
@@ -125,7 +130,8 @@ class MapDirectionsStore {
         if (turf.booleanDisjoint(targetCircles, routeLine)) {
           onSuccess({ route: route[0] });
           this.isValidRoute = true;
-          this.eventUnsubscribe('route', onRoute);
+          this.events['route'] = [];
+          this.events['fail'] = [];
         } else {
           ++this.trial;
           const polygon2 = turf.transformScale(
@@ -139,10 +145,16 @@ class MapDirectionsStore {
         }
       });
     };
+    const _onFail = (data) => {
+      onFail();
+      this.events['route'] = [];
+      this.events['fail'] = [];
+    };
     if (this.waypoints.length > 0) {
       this.waypoints = [];
     }
-    this.eventSubscribe('route', action(onRoute));
+    this.eventSubscribe('route', action(_onRoute));
+    this.eventSubscribe('fail', action(_onFail));
     this.fetchDirections();
   }
 
@@ -208,6 +220,7 @@ class MapDirectionsStore {
         if (data.error) {
           this.setDirections([]);
           this.setError(data.error);
+          this.eventEmit('fail', data.error);
           return;
         }
 
@@ -221,8 +234,10 @@ class MapDirectionsStore {
           data.waypoints[data.waypoints.length - 1].location
         );
       } else {
+        const { message } = JSON.parse(request.responseText);
         this.setDirections([]);
-        this.setError(JSON.parse(request.responseText).message);
+        this.setError(message);
+        this.eventEmit('fail', message);
       }
     });
 
@@ -244,7 +259,6 @@ class MapDirectionsStore {
 
   buildDirectionsQuery() {
     const query = [...this.origin.geometry.coordinates.join(','), ';'];
-    console.log(this.waypoints);
     if (this.waypoints.length) {
       this.waypoints.forEach((waypoint) => {
         query.push(waypoint.geometry.coordinates.join(','));

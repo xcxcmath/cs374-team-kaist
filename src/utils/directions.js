@@ -1,3 +1,6 @@
+import { FlyToInterpolator } from 'react-map-gl';
+import MapState from 'react-map-gl/src/utils/map-state';
+
 function validCoords(coords) {
   return (
     coords[0] >= -180 && coords[0] <= 180 && coords[1] >= -90 && coords[1] <= 90
@@ -65,6 +68,26 @@ const format = {
   },
 };
 
+function flyToViewport(context, props, opts) {
+  const { viewport } = context;
+  const mapState = new MapState(Object.assign({}, viewport, opts));
+  const viewState = Object.assign({}, mapState.getViewportProps(), {
+    transitionDuration: 1000,
+    transitionEasing: (t) =>
+      ((t *= 2) <= 1 ? t * t * t : (t -= 2) * t * t + 2) / 2,
+    transitionInterpolator: new FlyToInterpolator(),
+    transitionInterruption: 1,
+  });
+
+  const onViewportChange =
+    props.onViewportChange || context.onViewportChange || (() => {});
+  const onViewStateChange =
+    props.onViewStateChange || context.onViewStateChange || (() => {});
+
+  onViewStateChange({ viewState });
+  onViewportChange(viewState);
+}
+
 export default {
   format,
   coordinateMatch,
@@ -72,4 +95,5 @@ export default {
   validCoords,
   wrap,
   roundWithOriginalPrecision,
+  flyToViewport,
 };

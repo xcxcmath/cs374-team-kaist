@@ -11,10 +11,9 @@ import { observer } from 'mobx-react';
 import useStore from '../hooks/use-store';
 
 import MapDirectionsStore from '../stores/map-directions-store';
-import { isEqual } from 'lodash';
+import { isEqual, throttle } from 'lodash';
 import extent from 'turf-extent';
 import * as turf from '@turf/turf/dist/js';
-import { throttle } from 'lodash';
 
 import {
   Icon,
@@ -24,9 +23,12 @@ import {
   CircularProgress,
   Slider,
   Typography,
+  Button,
 } from '@material-ui/core';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import { makeStyles } from '@material-ui/core/styles';
+
+import utils from '../utils/directions';
 
 const useStyles = makeStyles((theme) => ({
   inputRoot: {
@@ -46,7 +48,8 @@ const api = 'https://api.mapbox.com/geocoding/v5/mapbox.places/';
 const Inputs = observer(() => {
   const classes = useStyles();
   const mds = useContext(MapDirectionsStore);
-  const { viewport, onViewportChange } = useContext(MapContext);
+  const context = useContext(MapContext);
+  const { viewport, onViewportChange } = context;
   const { accessToken, crimeData } = useStore((it) => it.mapStore);
   const circles = useRef([{}, {}, {}]);
   const [originValue, setOriginValue] = useState(null);
@@ -59,12 +62,28 @@ const Inputs = observer(() => {
   const [destinationLoading, setDestinationLoading] = useState(false);
   const [tempMaximumDegree, setTempMaximumDegree] = useState(mds.maximumDegree);
 
+  const [status, setStatus] = useState('init'); // init, success, fail
+  const [routeToAdd, setRouteToAdd] = useState(null);
+
   useEffect(() => {
+    setStatus('init');
+    setRouteToAdd(null);
     if (mds.canFetch()) {
       mds.fetchSafeDirections(
         circles.current,
-        (p) => console.log(p),
-        () => console.log('failed'),
+        ({ route }) => {
+          console.log(route);
+          setRouteToAdd({
+            ...route,
+            origin: originValue,
+            destination: destinationValue,
+          });
+          setStatus('success');
+        },
+        () => {
+          setStatus('fail');
+          setRouteToAdd(null);
+        },
         15
       );
     }
@@ -126,21 +145,36 @@ const Inputs = observer(() => {
         features: [origin, destination],
       });
 
-      onViewportChange(
-        viewport.fitBounds(
-          [
-            [bb[0], bb[1]],
-            [bb[2], bb[3]],
-          ],
-          { padding: routePadding }
-        )
+      utils.flyToViewport(
+        context,
+        {},
+        {
+          ...viewport.fitBounds(
+            [
+              [bb[0], bb[1]],
+              [bb[2], bb[3]],
+            ],
+            {
+              padding: {
+                top: routePadding + 300,
+                bottom: routePadding,
+                left: routePadding,
+                right: routePadding,
+              },
+            }
+          ),
+        }
       );
     } else {
-      onViewportChange({
-        ...viewport,
-        longitude: coords[0],
-        latitude: coords[1],
-      });
+      utils.flyToViewport(
+        context,
+        {},
+        {
+          ...viewport,
+          longitude: coords[0],
+          latitude: coords[1],
+        }
+      );
     }
   };
 
@@ -273,6 +307,17 @@ const Inputs = observer(() => {
           <img style={{ backgroundColor: '#8a8bc9' }} src="icons/arrive.svg" />
         </Icon>
       )}
+      {status === 'success' && routeToAdd && (
+        <div>
+          {`${(routeToAdd.distance / 1000).toFixed(1)} km, ${(
+            routeToAdd.duration / 60
+          ).toFixed(1)} min`}
+          <Button variant="contained" color="primary">
+            Add
+          </Button>
+        </div>
+      )}
+      {status === 'fail' && <div>Failed to find your path...</div>}
     </Paper>
   );
 });
@@ -282,6 +327,12 @@ export default observer(function MapDirectionsControl() {
     useContext(MapDirectionsStore);
   const { context, containerRef } = useMapControl({
     onDragStart: (evt) => {
+      evt.stopPropagation();
+    },
+    onClick: (evt) => {
+      evt.stopPropagation();
+    },
+    onScroll: (evt) => {
       evt.stopPropagation();
     },
   });

@@ -18,18 +18,14 @@ const crimeData = [
 export default class MapStore {
   viewport = null;
   accessToken = process.env.REACT_APP_MAPBOX_KEY;
-  planList = [];
-  focusedPlanId = null;
+  currentPlan = null;
   crimeData = crimeData;
 
   constructor(viewport) {
     makeAutoObservable(this);
     this.setViewport = this.setViewport.bind(this);
-    this.getFocusedPlan = this.getFocusedPlan.bind(this);
-    this.focusPlan = this.focusPlan.bind(this);
-    this.unfocusPlan = this.unfocusPlan.bind(this);
-    this.setPlanList = this.setPlanList.bind(this);
-    this.addCrimeData = this.addCrimeData.bind(this);
+    this.setCurrentPlan = this.setCurrentPlan.bind(this);
+    this.setCrimeData = this.setCrimeData.bind(this);
 
     this.viewport = viewport;
   }
@@ -38,23 +34,11 @@ export default class MapStore {
     this.viewport = viewport;
   }
 
-  getFocusedPlan() {
-    return this.planLines[this.focusedPlanId];
+  setCurrentPlan(plan) {
+    this.currentPlan = plan;
   }
 
-  focusPlan(id) {
-    this.focusedPlanId = id;
-  }
-
-  unfocusPlan() {
-    this.focusedPlanId = null;
-  }
-
-  setPlanList(list) {
-    this.planList = list;
-  }
-
-  addCrimeData(data) {
-    this.crimeData.push(data);
+  setCrimeData(data) {
+    this.crimeData = data;
   }
 }

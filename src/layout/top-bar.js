@@ -196,7 +196,7 @@ export default observer(function TopBar() {
                 input: classes.inputInput,
               }}
               inputProps={{ 'aria-label': 'search location' }}
-              onClick={() => setMode('main')}
+              onClick={() => {}}
             />
           </div>
           <div className={classes.grow} />

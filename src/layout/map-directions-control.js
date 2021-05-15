@@ -7,6 +7,7 @@ import {
 } from 'react-map-gl';
 import { decode } from '@mapbox/polyline';
 
+import { action } from 'mobx';
 import { observer } from 'mobx-react';
 import useStore from '../hooks/use-store';
 
@@ -49,8 +50,11 @@ const Inputs = observer(() => {
   const classes = useStyles();
   const mds = useContext(MapDirectionsStore);
   const context = useContext(MapContext);
-  const { viewport, onViewportChange } = context;
-  const { accessToken, crimeData } = useStore((it) => it.mapStore);
+  const { viewport } = context;
+  const { setMode } = useStore();
+  const { accessToken, crimeData, setCurrentPlan } = useStore(
+    (it) => it.mapStore
+  );
   const circles = useRef([{}, {}, {}]);
   const [originValue, setOriginValue] = useState(null);
   const [originInputValue, setOriginInputValue] = useState('');
@@ -312,7 +316,14 @@ const Inputs = observer(() => {
           {`${(routeToAdd.distance / 1000).toFixed(1)} km, ${(
             routeToAdd.duration / 60
           ).toFixed(1)} min`}
-          <Button variant="contained" color="primary">
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={action(() => {
+              setCurrentPlan(routeToAdd);
+              setMode('main');
+            })}
+          >
             Add
           </Button>
         </div>

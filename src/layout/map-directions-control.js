@@ -75,12 +75,13 @@ const Inputs = observer(() => {
     if (mds.canFetch()) {
       mds.fetchSafeDirections(
         circles.current,
-        ({ route }) => {
+        ({ route, geojson }) => {
           console.log(route);
           setRouteToAdd({
             ...route,
             origin: originValue,
             destination: destinationValue,
+            geojson,
           });
           setStatus('success');
         },

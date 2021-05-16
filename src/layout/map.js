@@ -12,9 +12,8 @@ import useStore from '../hooks/use-store';
 import MapDirectionsControl from './map-directions-control';
 
 function Map() {
-  const { accessToken, viewport, setViewport, crimeData } = useStore(
-    (it) => it.mapStore
-  );
+  const { accessToken, viewport, setViewport, crimeData, currentPlan } =
+    useStore((it) => it.mapStore);
   const { mode } = useStore();
 
   const trackUserLocation = false;
@@ -92,6 +91,75 @@ function Map() {
           </Source>
         ))}
 
+        {currentPlan !== null && (
+          <Source
+            id="current-plan-source"
+            type="geojson"
+            data={currentPlan.geojson}
+          >
+            <Layer
+              id="current-plan-route-line-casing"
+              type="line"
+              layout={{ 'line-cap': 'round', 'line-join': 'round' }}
+              paint={{
+                'line-color': '#4c45b0',
+                'line-width': 12,
+                'line-opacity': 1,
+              }}
+              filter={['all', ['in', '$type', 'LineString']]}
+            />
+            <Layer
+              id="current-plan-origin-point"
+              type="circle"
+              paint={{ 'circle-radius': 18, 'circle-color': '#3bb2d0' }}
+              filter={[
+                'all',
+                ['in', '$type', 'Point'],
+                ['in', 'marker-symbol', 'A'],
+              ]}
+            />
+            <Layer
+              id="current-plan-origin-label"
+              type="symbol"
+              layout={{
+                'text-field': 'A',
+                'text-font': ['Open Sans Bold', 'Arial Unicode MS Bold'],
+                'text-size': 15,
+              }}
+              paint={{ 'text-color': '#fff' }}
+              filter={[
+                'all',
+                ['in', '$type', 'Point'],
+                ['in', 'marker-symbol', 'A'],
+              ]}
+            />
+            <Layer
+              id="current-plan-destination-point"
+              type="circle"
+              paint={{ 'circle-radius': 18, 'circle-color': '#8a8bc9' }}
+              filter={[
+                'all',
+                ['in', '$type', 'Point'],
+                ['in', 'marker-symbol', 'B'],
+              ]}
+            />
+            <Layer
+              id="current-plan-destination-label"
+              type="symbol"
+              layout={{
+                'text-field': 'B',
+                'text-font': ['Open Sans Bold', 'Arial Unicode MS Bold'],
+                'text-size': 15,
+              }}
+              paint={{ 'text-color': '#fff' }}
+              filter={[
+                'all',
+                ['in', '$type', 'Point'],
+                ['in', 'marker-symbol', 'B'],
+              ]}
+            />
+          </Source>
+        )}
         {mode === 'plan' && <MapDirectionsControl />}
         <NavigationControl style={{ right: 10, top: 10 }} />
         {false && (

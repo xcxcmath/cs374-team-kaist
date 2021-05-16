@@ -15,27 +15,27 @@ import TimerIcon from '@material-ui/icons/Timer';
       // />
 export default function SwipeCard(props) {
   return <div>
-    <div style={{display: 'flex', backgroundColor: '#FBEEEE', width: '85%', height: '15%', position: 'fixed', top: '60px', marginLeft: '5px'}}>
-      <div style={{display:'flex', alignItems: 'center', marginLeft: '4px'}}><ChevronLeftIcon color='action'/></div>
-      <div style={{display: 'flex', width: '30%', height: '100%', alignItems: 'center'}}>
+    <div style={{display: 'flex', backgroundColor: '#FBEEEE', width: '85%', height: '100px', position: 'fixed', top: '60px', marginLeft: '5px'}}>
+      <div style={{display:'flex', alignItems: 'center'}}><ChevronLeftIcon color='action'/></div>
+      <div style={{display: 'flex', height: '100%', alignItems: 'center'}}>
         <img src={props.image} style={{ height: '88%'}}></img>
       </div>
-      <div style={{display: 'flex', flexDirection: 'column'}}>
-        <div style={{fontFamily: 'roboto, sans-serif', fontSize: '20px', marginTop: '5px'}}>
+      <div style={{display: 'flex', flexDirection: 'column', marginLeft: '6px'}}>
+        <div style={{fontFamily: 'roboto, sans-serif', fontSize: '16px', marginTop: '4px', textAlign: 'left'}}>
           {props.name} / {props.gender} / {props.age} 
         </div>
-        <div style={{fontFamily: 'roboto, sans-serif', fontSize: '20px', marginTop: '5px', textAlign: 'left'}}>{props.travelText}</div>
-        <div style={{display: 'flex', flexDirection: 'row', marginTop: '10px', fontFamily: 'roboto, sans-serif'}}>
-          <Fab color='primary' variant='extended' size='small'>Go to Bio</Fab>
-          <div style={{display: 'flex', width: '70px', backgroundColor: 'lightblue', height: '35px', marginLeft: '10px', textAlign: 'center'}}>
+        <div style={{fontFamily: 'roboto, sans-serif', fontSize: '16px', marginTop: '3px', textAlign: 'left'}}>{props.travelText}</div>
+        <div style={{display: 'flex', flexDirection: 'row', marginTop: '8px', fontFamily: 'roboto, sans-serif'}}>
+          <div style={{}}><Fab color='primary' variant='extended' size='small'>Go&nbsp;to&nbsp;Bio</Fab></div>
+          <div style={{display: 'flex', width: '70px', backgroundColor: 'lightblue', height: '35px', textAlign: 'center', marginLeft: '10px'}}>
 
             <div style={{alignSelf: 'center', marginLeft: '1px'}}><TimerIcon size='small'/></div>
-            <div style={{alignSelf: 'center'}}>{props.timeLeft}</div>
+            <div style={{alignSelf: 'center', fontSize: '16px'}}>{props.timeLeft}</div>
             </div>
         </div>
         
       </div>
-      <div style={{display:'flex', alignItems: 'center', marginLeft: '4px'}}><ChevronRightIcon color='action'/></div>
+      <div style={{display:'flex', alignItems: 'center', marginLeft: 'auto'}}><ChevronRightIcon color='action'/></div>
     </div>
   </div>;
 }

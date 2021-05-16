@@ -25,28 +25,28 @@ export default function Biography(props) {
         </div>
         <div style={{display: 'flex', alignItems: 'flex-start'}}>
             <div style={{marginLeft: '4%'}}>{<HomeIcon/>}</div>
-            <div style={{alignSelf: 'center', textAlign: 'left'}}> home country: {fromPlace}</div>
+            <div style={{alignSelf: 'center', textAlign: 'left', fontFamily: 'roboto, sans-serif'}}> home country: {fromPlace}</div>
         </div>
         
         <div style={{display: 'flex', alignItems: 'flex-start', width: '100%', }}>
             <div style={{marginLeft: '4%'}}>{<AccountCircleIcon/>}</div>
-            <div style={{alignSelf: 'center', textAlign: 'left'}}>gender: {gender}</div>
+            <div style={{alignSelf: 'center', textAlign: 'left', fontFamily: 'roboto, sans-serif'}}>gender: {gender}</div>
         </div>
         <div style={{display: 'flex', alignItems: 'flex-start', paddingBottom: '10px', borderBottom: '1px #5c5c5c solid'}}>
             
             <div style={{marginLeft: '4%'}}>
             {<PlaceIcon/>}
             </div>
-            <div style={{alignSelf: 'center', textAlign: 'left'}}>final destination: {finalDest}</div>
+            <div style={{alignSelf: 'center', textAlign: 'left', fontFamily: 'roboto, sans-serif'}}>final destination: {finalDest}</div>
         </div>
         <div style={{display: 'flex', alignItems: 'flex-start', width: '100%', marginTop: '10px', paddingBottom: '10px', borderBottom: '1px #5c5c5c solid'}}>
-            <div style={{marginLeft: '4%', textAlign: 'left', fontFamily: 'Lora, serif', fontSize: '20px', color: '#5c5c5c', width:'92%'}}>Reason for travel: {moveText}</div>
+            <div style={{marginLeft: '4%', textAlign: 'left', fontFamily: 'roboto, sans-serif', fontSize: '20px', color: '#5c5c5c', width:'92%'}}>Reason for travel: {moveText}</div>
         </div>  
         <div style={{display: 'flex', alignItems: 'flex-start', width: '100%', marginTop: '10px', paddingBottom: '10px', borderBottom: '1px #5c5c5c solid'}}>
-            <div style={{marginLeft: '4%', textAlign: 'left', fontFamily: 'Lora, serif', fontSize: '20px', color: '#5c5c5c', width:'92%'}}>Reason for visiting the country: {visitText}</div>
+            <div style={{marginLeft: '4%', textAlign: 'left', fontFamily: 'roboto, sans-serif', fontSize: '20px', color: '#5c5c5c', width:'92%'}}>Reason for visiting the country: {visitText}</div>
         </div>
         <div style={{display: 'flex', alignItems: 'flex-start', width: '100%', marginTop: '10px', paddingBottom: '10px', borderBottom: '1px #5c5c5c solid'}}>
-            <div style={{marginLeft: '4%', textAlign: 'left', fontFamily: 'Lora, serif', fontSize: '20px', color: '#5c5c5c', width:'92%'}}>About myself: {bioText}</div>
+            <div style={{marginLeft: '4%', textAlign: 'left', fontFamily: 'roboto, sans-serif', fontSize: '20px', color: '#5c5c5c', width:'92%'}}>About myself: {bioText}</div>
         </div>
         <div style={{width: '100%', marginTop: '10px', paddingBottom: '10px', borderBottom: '1px #5c5c5c solid'}}>
             <div style={{fontFamily: 'roboto, sans-serif'}}>

@@ -10,19 +10,25 @@ import MapGL, {
 import * as turf from '@turf/turf/dist/js';
 import useStore from '../hooks/use-store';
 
+import { Typography } from '@material-ui/core';
+
 import MapDirectionsControl from './map-directions-control';
+
+import DegreeLabel, {
+  circleColors,
+  circleLabelColors,
+} from '../components/degree-label';
 
 function Map() {
   const { accessToken, viewport, setViewport, crimeData, currentPlan } =
     useStore((it) => it.mapStore);
-  const { mode } = useStore();
+  const { mode, flickerSwitch } = useStore();
 
   const trackUserLocation = false;
   const auto = false;
 
   const mapRef = useRef();
   const [circles, setCircles] = useState({});
-  const [flick, setFlick] = useState(1);
   const [popupCrimeProps, setPopupCrimeProps] = useState(null);
 
   useEffect(() => {
@@ -44,26 +50,7 @@ function Map() {
         units: 'kilometers',
       })
     );
-    /*const newCircles = [1, 2, 3]
-      .map((degree) =>
-        allFeatures.filter(({ properties }) => properties.degree === degree)
-      )
-      .map((features, i) =>
-        turf.buffer({ type: 'FeatureCollection', features }, 0.25, {
-          units: 'kilometers',
-        })
-      );
-    setCircles(newCircles);*/
   }, [crimeData]);
-
-  useEffect(() => {
-    const id = setInterval(() => {
-      setFlick((prev) => (prev === 1 ? 0 : 1));
-    }, 1000);
-    return () => {
-      clearInterval(id);
-    };
-  }, []);
 
   return (
     <div
@@ -94,33 +81,36 @@ function Map() {
         }}
       >
         <Source id="crime-data-source" type="geojson" data={circles}>
-          <Layer
-            id="crime-data-layer-1"
-            type="fill"
-            paint={{
-              'fill-opacity': flick === 1 ? 0.15 + 0.2 * 1 : 0.15,
-              'fill-color': '#f03b20',
-            }}
-            filter={['==', 'degree', 1]}
-          />
-          <Layer
-            id="crime-data-layer-2"
-            type="fill"
-            paint={{
-              'fill-opacity': flick === 1 ? 0.15 + 0.2 * 2 : 0.15,
-              'fill-color': '#f43b20',
-            }}
-            filter={['==', 'degree', 2]}
-          />
-          <Layer
-            id="crime-data-layer-3"
-            type="fill"
-            paint={{
-              'fill-opacity': flick === 1 ? 0.15 + 0.2 * 3 : 0.15,
-              'fill-color': '#f83b20',
-            }}
-            filter={['==', 'degree', 3]}
-          />
+          {[1, 2, 3].map((degree) => (
+            <Layer
+              key={`crime-data-layer-${degree}`}
+              id={`crime-data-layer-${degree}`}
+              type="fill"
+              paint={{ 'fill-color': circleColors[degree][flickerSwitch] }}
+              filter={['==', 'degree', degree]}
+            />
+          ))}
+          {viewport.zoom > 12 &&
+            [1, 2, 3].map((degree) => (
+              <Layer
+                key={`crime-data-layer-${degree}-label`}
+                id={`crime-data-layer-${degree}-label`}
+                type="symbol"
+                layout={{
+                  'text-field': `${degree}`,
+                  'text-size': 36,
+                  'text-font': ['Roboto Bold'],
+                  'text-ignore-placement': true,
+                }}
+                paint={{
+                  'text-color': circleLabelColors[degree][flickerSwitch],
+                  'text-halo-blur': 5,
+                  'text-halo-color': circleColors[degree][flickerSwitch],
+                  'text-halo-width': 2,
+                }}
+                filter={['==', 'degree', degree]}
+              />
+            ))}
         </Source>
         {popupCrimeProps !== null && (
           <Popup
@@ -130,7 +120,16 @@ function Map() {
             closeOnClick={false}
             onClose={() => setPopupCrimeProps(null)}
           >
-            {popupCrimeProps.description}
+            <Typography variant="subtitle1">
+              {popupCrimeProps.category}
+            </Typography>
+            <DegreeLabel
+              degree={popupCrimeProps.degree}
+              flickerSwitch={flickerSwitch}
+            />
+            <Typography variant="body1">
+              {popupCrimeProps.description}
+            </Typography>
           </Popup>
         )}
         {currentPlan !== null && (

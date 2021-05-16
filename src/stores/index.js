@@ -7,6 +7,7 @@ class RootStore {
   mapStore = null;
   firebaseStore = null;
 
+  flickerSwitch = true;
   mode = 'main'; // 'main', 'plan', etc..
   ancherMenuOpen = false;
 
@@ -16,6 +17,12 @@ class RootStore {
     this.setAncherMenuOpen = this.setAncherMenuOpen.bind(this);
 
     this.mapStore = new MapStore(viewport);
+
+    setInterval(() => this.toggleFlickerSwitch(), 1000);
+  }
+
+  toggleFlickerSwitch() {
+    this.flickerSwitch = !this.flickerSwitch;
   }
 
   setMode(mode) {

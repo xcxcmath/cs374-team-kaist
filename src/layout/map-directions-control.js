@@ -28,6 +28,7 @@ import {
 } from '@material-ui/core';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import { makeStyles } from '@material-ui/core/styles';
+import DegreeLabel from '../components/degree-label';
 
 import utils from '../utils/directions';
 
@@ -51,7 +52,7 @@ const Inputs = observer(() => {
   const mds = useContext(MapDirectionsStore);
   const context = useContext(MapContext);
   const { viewport } = context;
-  const { setMode } = useStore();
+  const { setMode, flickerSwitch } = useStore();
   const { accessToken, crimeData, setCurrentPlan } = useStore(
     (it) => it.mapStore
   );
@@ -230,23 +231,36 @@ const Inputs = observer(() => {
 
   return (
     <Paper component="form" className={classes.inputRoot}>
-      <Typography gutterBottom>Path Safety</Typography>
+      <Typography gutterBottom>Crime Hotspots Avoidance</Typography>
       <Slider
         className={classes.slider}
         marks={[
-          { value: 3, label: 'Danger' },
-          { value: 2, label: '' },
-          { value: 1, label: '' },
-          { value: 0, label: 'Safe' },
+          {
+            value: -3,
+            label: <DegreeLabel degree={3} flickerSwitch={flickerSwitch} />,
+          },
+          {
+            value: -2,
+            label: <DegreeLabel degree={2} flickerSwitch={flickerSwitch} />,
+          },
+          {
+            value: -1,
+            label: <DegreeLabel degree={1} flickerSwitch={flickerSwitch} />,
+          },
+          {
+            value: 0,
+            label: (
+              <span style={{ textAlign: 'left', color: 'green' }}>Safest!</span>
+            ),
+          },
         ]}
-        min={0}
-        max={3}
+        min={-3}
+        max={0}
         step={1}
-        value={tempMaximumDegree}
-        onChange={(e, v) => setTempMaximumDegree(v)}
-        valueLabelDisplay="auto"
+        value={-tempMaximumDegree}
+        onChange={(e, v) => setTempMaximumDegree(-v)}
         onChangeCommitted={(e, v) => {
-          mds.setMaximumDegree(v);
+          mds.setMaximumDegree(-v);
         }}
       />
       {renderAutocomplete(

@@ -204,11 +204,15 @@ function Map() {
         )}
         {mode === 'plan' && <MapDirectionsControl />}
         <NavigationControl style={{ right: 10, top: 10 }} />
-        {false && (
+        {true && (
           <GeolocateControl
-            style={{ left: 10, top: 80 }}
+            style={{ right: 10, top: 100 }}
             trackUserLocation={trackUserLocation}
             auto={auto}
+            positionOptions={{ enableHighAccuracy: true, timeout: 6000 }}
+            onGeolocate={(data) => {
+              console.log(data);
+            }}
           />
         )}
       </MapGL>

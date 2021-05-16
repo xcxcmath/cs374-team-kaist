@@ -161,7 +161,7 @@ const Inputs = observer(() => {
             ],
             {
               padding: {
-                top: routePadding + 300,
+                top: routePadding + 100,
                 bottom: routePadding,
                 left: routePadding,
                 right: routePadding,
@@ -278,7 +278,11 @@ const Inputs = observer(() => {
         originLoading,
         'Origin',
         <Icon>
-          <img style={{ backgroundColor: '#3bb2d0' }} src="icons/depart.svg" />
+          <img
+            style={{ backgroundColor: '#3bb2d0' }}
+            src="icons/depart.svg"
+            alt=""
+          />
         </Icon>
       )}
       {renderAutocomplete(
@@ -309,7 +313,11 @@ const Inputs = observer(() => {
         destinationLoading,
         'Destination',
         <Icon>
-          <img style={{ backgroundColor: '#8a8bc9' }} src="icons/arrive.svg" />
+          <img
+            style={{ backgroundColor: '#8a8bc9' }}
+            src="icons/arrive.svg"
+            alt=""
+          />
         </Icon>
       )}
       {status === 'success' && routeToAdd && (
@@ -355,7 +363,7 @@ export default observer(function MapDirectionsControl() {
     return () => {
       initialize();
     };
-  }, [map]);
+  }, [map, initialize]);
 
   const data = useMemo(() => {
     const geojson = {

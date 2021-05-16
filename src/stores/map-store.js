@@ -3,15 +3,17 @@ import { makeAutoObservable } from 'mobx';
 const crimeData = [
   {
     coordinates: [126.9767, 37.575],
-    category: '',
+    category: 'Category 1',
     id: '1',
     degree: 3,
+    description: '2 events per day',
   },
   {
     coordinates: [126.976, 37.584],
-    category: '',
+    category: 'Category 2',
     id: '2',
     degree: 1,
+    description: '100 events per day',
   },
 ];
 

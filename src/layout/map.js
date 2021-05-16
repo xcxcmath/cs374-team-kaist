@@ -5,6 +5,7 @@ import MapGL, {
   GeolocateControl,
   Source,
   Layer,
+  Popup,
 } from 'react-map-gl';
 import * as turf from '@turf/turf/dist/js';
 import useStore from '../hooks/use-store';
@@ -20,17 +21,30 @@ function Map() {
   const auto = false;
 
   const mapRef = useRef();
-  const [circles, setCircles] = useState([{}, {}, {}]);
+  const [circles, setCircles] = useState({});
   const [flick, setFlick] = useState(1);
+  const [popupCrimeProps, setPopupCrimeProps] = useState(null);
 
   useEffect(() => {
     const allFeatures =
-      crimeData?.map(({ coordinates, category, id, degree }) => ({
+      crimeData?.map(({ coordinates, category, id, degree, description }) => ({
         type: 'Feature',
         geometry: { type: 'Point', coordinates: [...coordinates] },
-        properties: { category, id, degree },
+        properties: {
+          category,
+          id,
+          degree,
+          description,
+          longitude: coordinates[0],
+          latitude: coordinates[1],
+        },
       })) ?? [];
-    const newCircles = [1, 2, 3]
+    setCircles(
+      turf.buffer({ type: 'FeatureCollection', features: allFeatures }, 0.25, {
+        units: 'kilometers',
+      })
+    );
+    /*const newCircles = [1, 2, 3]
       .map((degree) =>
         allFeatures.filter(({ properties }) => properties.degree === degree)
       )
@@ -39,7 +53,7 @@ function Map() {
           units: 'kilometers',
         })
       );
-    setCircles(newCircles);
+    setCircles(newCircles);*/
   }, [crimeData]);
 
   useEffect(() => {
@@ -56,7 +70,7 @@ function Map() {
       style={{
         position: 'absolute',
         width: '100vw',
-        height: '90vh',
+        height: '92vh',
         zIndex: -10,
       }}
     >
@@ -70,27 +84,55 @@ function Map() {
         onViewportChange={setViewport}
         style={{ position: 'absolute', bottom: 0, zIndex: -5 }}
         onClick={(e) => {
+          const clickedCrimeList = e.features.filter(
+            (it) => it.layer.source === 'crime-data-source'
+          );
+          if (clickedCrimeList.length) {
+            setPopupCrimeProps(clickedCrimeList[0].properties);
+          }
           console.log(e.features);
         }}
       >
-        {circles.map((it, i) => (
-          <Source
-            key={`crime-data-source-${i + 1}`}
-            id={`crime-data-source-${i + 1}`}
-            type="geojson"
-            data={it}
+        <Source id="crime-data-source" type="geojson" data={circles}>
+          <Layer
+            id="crime-data-layer-1"
+            type="fill"
+            paint={{
+              'fill-opacity': flick === 1 ? 0.15 + 0.2 * 1 : 0.15,
+              'fill-color': '#f03b20',
+            }}
+            filter={['==', 'degree', 1]}
+          />
+          <Layer
+            id="crime-data-layer-2"
+            type="fill"
+            paint={{
+              'fill-opacity': flick === 1 ? 0.15 + 0.2 * 2 : 0.15,
+              'fill-color': '#f43b20',
+            }}
+            filter={['==', 'degree', 2]}
+          />
+          <Layer
+            id="crime-data-layer-3"
+            type="fill"
+            paint={{
+              'fill-opacity': flick === 1 ? 0.15 + 0.2 * 3 : 0.15,
+              'fill-color': '#f83b20',
+            }}
+            filter={['==', 'degree', 3]}
+          />
+        </Source>
+        {popupCrimeProps !== null && (
+          <Popup
+            longitude={popupCrimeProps.longitude}
+            latitude={popupCrimeProps.latitude}
+            closeButton={true}
+            closeOnClick={false}
+            onClose={() => setPopupCrimeProps(null)}
           >
-            <Layer
-              id={`crime-data-layer-${i + 1}`}
-              type="fill"
-              paint={{
-                'fill-opacity': flick === 1 ? 0.15 + 0.2 * (i + 1) : 0.15,
-                'fill-color': `#f${i * 4}3b20`,
-              }}
-            />
-          </Source>
-        ))}
-
+            {popupCrimeProps.description}
+          </Popup>
+        )}
         {currentPlan !== null && (
           <Source
             id="current-plan-source"

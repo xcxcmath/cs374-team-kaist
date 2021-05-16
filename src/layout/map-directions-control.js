@@ -204,6 +204,8 @@ const Inputs = observer(() => {
       style={{ width: '100%' }}
       getOptionLabel={(option) => option.place_name}
       getOptionSelected={(option, value) => option.id === value.id}
+      blurOnSelect
+      size="small"
       renderInput={(params) => (
         <TextField
           {...params}

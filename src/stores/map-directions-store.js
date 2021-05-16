@@ -49,7 +49,7 @@ class MapDirectionsStore {
   error = null;
 
   // maximum degree
-  maximumDegree = 3;
+  maximumDegree = 1;
   isValidRoute = false;
   trial = 0;
 

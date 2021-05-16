@@ -58,7 +58,7 @@ export default observer(function BottomPlanList() {
       style={{
         position: 'absolute',
         left: 0,
-        bottom: 0,
+        bottom: 10,
         width: '100%',
         zIndex: 1,
       }}

@@ -120,9 +120,7 @@ function Map() {
             closeOnClick={false}
             onClose={() => setPopupCrimeProps(null)}
           >
-            <Typography variant="subtitle1">
-              {popupCrimeProps.category}
-            </Typography>
+            {popupCrimeProps.category}
             <DegreeLabel
               degree={popupCrimeProps.degree}
               flickerSwitch={flickerSwitch}

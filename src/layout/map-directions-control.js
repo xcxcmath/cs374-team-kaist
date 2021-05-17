@@ -38,7 +38,7 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    width: 300,
+    width: 320,
   },
   input: { marginTop: theme.spacing(2) },
   slider: { margin: theme.spacing(1), width: 250, height: 10 },
@@ -238,21 +238,21 @@ const Inputs = observer(() => {
         className={classes.slider}
         marks={[
           {
-            value: -3,
+            value: -2,
             label: <DegreeLabel degree={3} flickerSwitch={flickerSwitch} />,
           },
           {
-            value: -2,
+            value: -1,
             label: <DegreeLabel degree={2} flickerSwitch={flickerSwitch} />,
           },
           {
-            value: -1,
+            value: 0,
             label: <DegreeLabel degree={1} flickerSwitch={flickerSwitch} />,
           },
           {
-            value: 0,
+            value: -3,
             label: (
-              <span style={{ textAlign: 'left', color: 'green' }}>Safest!</span>
+              <span style={{ textAlign: 'left', color: 'red' }}>Allow all</span>
             ),
           },
         ]}

@@ -24,19 +24,10 @@ import DegreeLabel, {
 
 const GeocoderWrapper = observer(({ mapRef, containerRef }) => {
   const { accessToken, setViewport } = useStore((it) => it.mapStore);
-  /*const { context } = useMapControl({
-    //onDragStart: (evt) => evt.stopPropagation(),
-    //onClick: (evt) => evt.stopPropagation(),
-  });*/
 
   if (!mapRef.current) {
     return <></>;
   }
-
-  /*const onViewportChange = useCallback(
-    (viewport) => utils.flyToViewport(context, {}, { ...viewport }),
-    [context]
-  );*/
 
   return (
     <Geocoder
@@ -55,7 +46,7 @@ function Map({ children }) {
     accessToken,
     viewport,
     setViewport,
-    crimeData,
+    crimeCircles,
     currentPlan,
     otherPlan,
     isOtherPlanValid,
@@ -71,28 +62,6 @@ function Map({ children }) {
 
   const mapRef = useRef();
   const geocoderContainerRef = useRef();
-  const [circles, setCircles] = useState({});
-
-  useEffect(() => {
-    const allFeatures =
-      crimeData?.map(({ coordinates, category, id, degree, description }) => ({
-        type: 'Feature',
-        geometry: { type: 'Point', coordinates: [...coordinates] },
-        properties: {
-          category,
-          id,
-          degree,
-          description,
-          longitude: coordinates[0],
-          latitude: coordinates[1],
-        },
-      })) ?? [];
-    setCircles(
-      turf.buffer({ type: 'FeatureCollection', features: allFeatures }, 0.25, {
-        units: 'kilometers',
-      })
-    );
-  }, [crimeData]);
 
   return (
     <div
@@ -131,7 +100,7 @@ function Map({ children }) {
           console.log(e.features);
         }}
       >
-        <Source id="crime-data-source" type="geojson" data={circles}>
+        <Source id="crime-data-source" type="geojson" data={crimeCircles}>
           {[1, 2, 3].map((degree) => (
             <Layer
               key={`crime-data-layer-${degree}`}

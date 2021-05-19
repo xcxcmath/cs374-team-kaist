@@ -110,6 +110,7 @@ const Inputs = observer(() => {
   useEffect(() => {
     setStatus('init');
     setRouteToAdd(null);
+    console.log('wow');
     if (mds.canFetch()) {
       mds.fetchSafeDirections(
         circles.current,
@@ -145,7 +146,7 @@ const Inputs = observer(() => {
         15
       );
     }
-  }, [mds, originValue, destinationValue, mds.maximumDegree, padding, context]);
+  }, [mds, originValue, destinationValue, mds.maximumDegree, padding]);
 
   useEffect(() => {
     const allFeatures =

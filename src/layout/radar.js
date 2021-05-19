@@ -31,7 +31,7 @@ export default observer(function Radar() {
     const center = turf.point(centerCoords, { for: 'line' });
     const bufferPoint = turf.point(centerCoords, { for: 'buffer' });
     const buffer = turf.buffer(bufferPoint, radarRadius);
-    const arc = turf.lineArc(center, radarRadius, theta, theta + 30);
+    const arc = turf.lineArc(center, radarRadius, theta, theta + 60);
     arc.geometry.coordinates = [
       centerCoords,
       ...arc.geometry.coordinates,
@@ -44,11 +44,13 @@ export default observer(function Radar() {
   useEffect(() => {
     if (crimeData && userCoords && radarRadius) {
       const here = turf.point([userCoords.longitude, userCoords.latitude]);
-      crimeData.forEach(({ coordinates, id }) => {
-        if (turf.distance(turf.point(coordinates), here) < radarRadius + 0.25) {
-          addNear(id);
-        }
-      });
+      crimeData
+        .filter(
+          ({ coordinates }) =>
+            turf.distance(turf.point(coordinates), here) < radarRadius + 0.25
+        )
+        .map(({ id }) => id)
+        .forEach(addNear);
     }
   }, [crimeData, userCoords, radarRadius, addNear]);
 

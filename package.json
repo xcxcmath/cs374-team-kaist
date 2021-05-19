@@ -18,10 +18,17 @@
     "mobx": "^6.3.0",
     "mobx-react": "^7.1.0",
     "react": "^17.0.2",
+    "react-art": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-map-gl": "^6.1.15",
+    "react-native": "^0.64.1",
+    "react-native-color": "0.0.10",
+    "react-native-gesture-handler": "^1.10.3",
+    "react-native-slider-color-picker": "^2.2.1",
+    "react-native-web": "^0.16.3",
     "react-router-dom": "^5.2.0",
-    "react-scripts": "4.0.3",
+    "react-router-native": "^5.2.0",
+    "react-scripts": "^4.0.3",
     "turf-extent": "^1.0.4",
     "web-vitals": "^1.1.2"
   },
@@ -48,5 +55,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@babel/preset-react": "^7.13.13"
   }
 }

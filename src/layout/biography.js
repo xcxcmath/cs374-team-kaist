@@ -1,5 +1,4 @@
 import React, { useState, useEffect, createElement } from 'react';
-import ReactDOM from 'react-dom';
 import HomeIcon from '@material-ui/icons/Home';
 import PlaceIcon from '@material-ui/icons/Place';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
@@ -18,12 +17,6 @@ var moveText = "I want to get to GS25 convenience store to get some drinks and s
 var finalDest = "GS25 convenience store, 160 Cheongsa-ro";
 var profilePic = 'https://s7g3.scene7.com/is/image/soloinvest/n00554A?$big_image_web$'
 export default function Biography(props) {
-    // function repMouseEnter(event){
-    //     event.target.style.color="red";
-    // }
-    // function repMouseLeave(event){
-    //     event.target.style.color="";
-    // }
     const [repDisplay, setRepDisplay] = useState(false);
     let repStyle = {
         display: 'none'

@@ -17,7 +17,7 @@ const crimeData = [
     description: '2 events per day',
   },
   {
-    coordinates: [127.43, 36.7034],
+    coordinates: [127.4275, 36.71],
     category: 'Violence',
     id: '3',
     degree: 2,
@@ -34,6 +34,7 @@ export default class MapStore {
   crimeData = crimeData;
   crimeCircles = { type: 'FeatureCollection', features: [] };
   crimePopups = [];
+  crimeNear = [];
   userCoords = null;
   radarRadius = 1;
 
@@ -46,6 +47,8 @@ export default class MapStore {
     this.setCrimeData = this.setCrimeData.bind(this);
     this.showPopup = this.showPopup.bind(this);
     this.closePopup = this.closePopup.bind(this);
+    this.addNear = this.addNear.bind(this);
+    this.removeNear = this.removeNear.bind(this);
     this.setUserCoords = this.setUserCoords.bind(this);
     this.setRadarRadius = this.setRadarRadius.bind(this);
 
@@ -110,6 +113,18 @@ export default class MapStore {
 
   closePopup(id) {
     this.crimePopups = this.crimePopups.filter((it) => it.id !== id);
+  }
+
+  addNear(id) {
+    const crime = this.crimeData.find((it) => it.id === id);
+    if (!crime) return;
+    if (this.crimeNear.findIndex((it) => it === id) !== -1) return;
+    this.crimeNear.push(id);
+    this.showPopup(id);
+  }
+
+  removeNear(id) {
+    this.crimeNear = this.crimeNear.filter((it) => it !== id);
   }
 
   setUserCoords(coords) {

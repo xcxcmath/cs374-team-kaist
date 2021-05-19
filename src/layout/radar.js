@@ -9,7 +9,7 @@ import * as turf from '@turf/turf/dist/js';
 import { useTheme } from '@material-ui/core/styles';
 
 export default observer(function Radar() {
-  const { crimeData, radarRadius, userCoords, showPopup } = useStore(
+  const { crimeData, radarRadius, userCoords, addNear } = useStore(
     (it) => it.mapStore
   );
   const theme = useTheme();
@@ -46,11 +46,11 @@ export default observer(function Radar() {
       const here = turf.point([userCoords.longitude, userCoords.latitude]);
       crimeData.forEach(({ coordinates, id }) => {
         if (turf.distance(turf.point(coordinates), here) < radarRadius + 0.25) {
-          showPopup(id);
+          addNear(id);
         }
       });
     }
-  }, [crimeData, userCoords, radarRadius, showPopup]);
+  }, [crimeData, userCoords, radarRadius, addNear]);
 
   if (!userCoords || !radarRadius) {
     return <></>;

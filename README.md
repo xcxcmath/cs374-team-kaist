@@ -87,7 +87,8 @@ User (ID) {
     home country: string  
     gender: string  
     biography: string  
-    companion: [ID: string, status: string] // status can be: approved  /  waiting (when you wait for users approval)  /  respond (when user is waiting for your approval)  
+    companion: [ID: string, status: string] // status can be: approved  /  waiting (when you wait for users approval)  /  respond (when user is waiting for your approval)
+    notification: [radius: integer, distance: radius] //TODO add all data needed for notification
 }  
   
 Request (ID = User ID) {  

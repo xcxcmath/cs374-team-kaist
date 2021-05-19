@@ -1,11 +1,10 @@
-import React, { useMemo } from 'react';
+import React, { useContext } from 'react';
+import { MapContext } from 'react-map-gl';
 import Fab from '@material-ui/core/Fab';
 
 import {
-  List,
-  Paper,
+  Slide,
   Card,
-  CardHeader,
   CardContent,
   CardActions,
   Typography,
@@ -19,29 +18,24 @@ import DirectionsWalkIcon from '@material-ui/icons/DirectionsWalk';
 import PeopleIcon from '@material-ui/icons/PeopleAlt';
 import DeleteIcon from '@material-ui/icons/Delete';
 import { useTheme } from '@material-ui/core/styles';
-import _ from 'lodash';
 
+import extent from 'turf-extent';
 import { action } from 'mobx';
 import { observer } from 'mobx-react';
 import useStore from '../hooks/use-store';
+import MapDirectionsStore from '../stores/map-directions-store';
 import DegreeLabel from '../components/degree-label';
 import utils from '../utils/directions';
 
 export default observer(function BottomPlanList() {
+  const context = useContext(MapContext);
+  const { viewport } = context;
   const theme = useTheme();
   const { mode, setMode, flickerSwitch } = useStore();
   const { currentPlan, setCurrentPlan } = useStore((it) => it.mapStore);
+  const mds = useContext(MapDirectionsStore);
 
-  React.useEffect(() => {
-    const it = _.cloneDeep(currentPlan);
-    const s = JSON.stringify(it);
-    const itt = JSON.parse(s);
-    console.log(it);
-    console.log(s);
-    console.log(itt);
-  }, [currentPlan]);
-
-  if (mode !== 'main') {
+  if (mode === 'plan') {
     return <></>;
   }
 
@@ -53,7 +47,6 @@ export default observer(function BottomPlanList() {
         left: 0,
         bottom,
         width: '100%',
-        zIndex: 1,
       }}
     >
       {children}
@@ -80,117 +73,157 @@ export default observer(function BottomPlanList() {
     const s = name.split(',');
     return [s[0], s.slice(1).join(',')];
   };
-  const [originMain, originOthers] = splitPlaceName(
-    currentPlan.origin.place_name
-  );
-  const [destinationMain, destinationOthers] = splitPlaceName(
-    currentPlan.destination.place_name
-  );
+  const [originMain] = splitPlaceName(currentPlan.origin.place_name);
+  const [destinationMain] = splitPlaceName(currentPlan.destination.place_name);
   return (
-    <Card
+    <Slide
+      direction="right"
+      in={true}
+      mountOnEnter
+      unmountOnExit
       style={{
         position: 'absolute',
-        left: '50%',
-        bottom: 20,
-        width: '90%',
-        transform: 'translate(-50%, 0)',
+        width: '100%',
+        bottom: 30,
       }}
     >
-      <CardContent>
-        <Typography
-          variant="h6"
-          gutterBottom
-          style={{ fontSize: 14 }}
-          color="textSecondary"
-        >
-          Your current plan
-        </Typography>
-        <div
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'flex-start',
+          alignItems: 'center',
+        }}
+      >
+        <Card
           style={{
-            display: 'flex',
-            flexWrap: 'wrap',
-            justifyContent: 'space-between',
-            alignItems: 'center',
+            width: '90vmin',
+          }}
+          onClick={() => {
+            const bb = extent(currentPlan.geojson);
+            utils.flyToViewport(
+              context,
+              {},
+              {
+                ...viewport.fitBounds(
+                  [
+                    [bb[0], bb[1]],
+                    [bb[2], bb[3]],
+                  ],
+                  {
+                    padding: mds.routePadding,
+                  }
+                ),
+              }
+            );
           }}
         >
-          <span style={{ display: 'flex', alignItems: 'center' }}>
-            <Icon size="small">
-              <img
-                style={{ backgroundColor: '#3bb2d0', borderRadius: '50%' }}
-                src="icons/depart.svg"
-                alt=""
-              />
-            </Icon>
-            <Typography variant="body1" style={{ fontWeight: 'bold' }}>
-              {originMain}
+          <CardContent>
+            <Typography
+              variant="h6"
+              gutterBottom
+              style={{ fontSize: 14 }}
+              color="textSecondary"
+            >
+              Your current plan
             </Typography>
-          </span>
-          <ArrowForwardIcon />
-          <span style={{ display: 'flex', alignItems: 'center' }}>
-            <Typography variant="body1" style={{ fontWeight: 'bold' }}>
-              {destinationMain}
-            </Typography>{' '}
-            <Icon size="small">
-              <img
-                style={{ backgroundColor: '#8a8bc9', borderRadius: '50%' }}
-                src="icons/arrive.svg"
-                alt=""
-              />
-            </Icon>
-          </span>
-        </div>
-        <div
-          style={{
-            display: 'flex',
-            flexWrap: 'wrap',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginTop: 10,
-          }}
-        >
-          <Typography
-            variant="body2"
-            style={
-              currentPlan.maximumDegree === 0
-                ? { color: theme.palette.success.dark }
-                : {}
-            }
-          >
-            {currentPlan.maximumDegree === 0 ? (
-              'Safest option'
-            ) : (
-              <span>
-                Degree &le;{' '}
-                <DegreeLabel
-                  degree={currentPlan.maximumDegree}
-                  flickerSwitch={flickerSwitch}
-                />
+            <div
+              style={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}
+            >
+              <span style={{ display: 'flex', alignItems: 'center' }}>
+                <Icon size="small">
+                  <img
+                    style={{ backgroundColor: '#3bb2d0', borderRadius: '50%' }}
+                    src="icons/depart.svg"
+                    alt=""
+                  />
+                </Icon>
+                <Typography variant="h6" style={{ fontWeight: 'bold' }}>
+                  {originMain}
+                </Typography>
               </span>
-            )}
-          </Typography>
-          <span style={{ display: 'flex', alignItems: 'center' }}>
-            <DirectionsWalkIcon />
-            {`${utils.distanceFormatKilo(
-              currentPlan.distance
-            )} km, ${utils.durationFormatMin(
-              currentPlan.duration
-            )} min. to walk`}
-          </span>
-        </div>
-      </CardContent>
-      <CardActions>
-        <Button variant="contained" color="primary" startIcon={<PeopleIcon />}>
-          Find Companion
-        </Button>
-        <IconButton
-          style={{ marginLeft: 'auto' }}
-          variant="outlined"
-          color="secondary"
-          onClick={() => setCurrentPlan(null)}
-        >
-          <DeleteIcon />
-        </IconButton>
-      </CardActions>
-    </Card>
+              <ArrowForwardIcon />
+              <span style={{ display: 'flex', alignItems: 'center' }}>
+                <Typography variant="h6" style={{ fontWeight: 'bold' }}>
+                  {destinationMain}
+                </Typography>{' '}
+                <Icon size="small">
+                  <img
+                    style={{ backgroundColor: '#8a8bc9', borderRadius: '50%' }}
+                    src="icons/arrive.svg"
+                    alt=""
+                  />
+                </Icon>
+              </span>
+            </div>
+            <div
+              style={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginTop: 10,
+              }}
+            >
+              <Typography
+                variant="body2"
+                style={
+                  currentPlan.maximumDegree === 0
+                    ? { color: theme.palette.success.dark }
+                    : {}
+                }
+              >
+                {currentPlan.maximumDegree === 0 ? (
+                  'Safest option'
+                ) : (
+                  <span>
+                    Degree &le;{' '}
+                    <DegreeLabel
+                      degree={currentPlan.maximumDegree}
+                      flickerSwitch={flickerSwitch}
+                    />
+                  </span>
+                )}
+              </Typography>
+              <span style={{ display: 'flex', alignItems: 'center' }}>
+                <DirectionsWalkIcon />
+                {`${utils.distanceFormatKilo(
+                  currentPlan.distance
+                )} km, ${utils.durationFormatMin(
+                  currentPlan.duration
+                )} min. to walk`}
+              </span>
+            </div>
+          </CardContent>
+          <CardActions>
+            <Button
+              variant="contained"
+              color="primary"
+              startIcon={<PeopleIcon />}
+              onClick={(e) => {
+                e.stopPropagation();
+              }}
+            >
+              Find Companion
+            </Button>
+            <IconButton
+              style={{ marginLeft: 'auto' }}
+              variant="outlined"
+              color="secondary"
+              onClick={(e) => {
+                e.stopPropagation();
+                setCurrentPlan(null);
+              }}
+            >
+              <DeleteIcon />
+            </IconButton>
+          </CardActions>
+        </Card>
+      </div>
+    </Slide>
   );
 });

@@ -21,6 +21,8 @@ export default class MapStore {
   viewport = null;
   accessToken = process.env.REACT_APP_MAPBOX_KEY;
   currentPlan = null;
+  otherPlan = null;
+  isOtherPlanValid = false;
   crimeData = crimeData;
   crimePopups = [];
   userCoords = null;
@@ -29,6 +31,8 @@ export default class MapStore {
     makeAutoObservable(this);
     this.setViewport = this.setViewport.bind(this);
     this.setCurrentPlan = this.setCurrentPlan.bind(this);
+    this.setOtherPlan = this.setOtherPlan.bind(this);
+    this.setIsOtherPlanValid = this.setIsOtherPlanValid.bind(this);
     this.setCrimeData = this.setCrimeData.bind(this);
     this.showPopup = this.showPopup.bind(this);
     this.closePopup = this.closePopup.bind(this);
@@ -43,6 +47,17 @@ export default class MapStore {
 
   setCurrentPlan(plan) {
     this.currentPlan = plan;
+  }
+
+  setOtherPlan(plan) {
+    this.otherPlan = plan;
+    if (!plan) {
+      this.isOtherPlanValid = false;
+    }
+  }
+
+  setIsOtherPlanValid(valid) {
+    this.isOtherPlanValid = valid;
   }
 
   setCrimeData(data) {

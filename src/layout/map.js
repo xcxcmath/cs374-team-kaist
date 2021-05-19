@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { observer } from 'mobx-react';
 import MapGL, {
   NavigationControl,
@@ -6,19 +6,16 @@ import MapGL, {
   Source,
   Layer,
   Popup,
-  _useMapControl as useMapControl,
 } from 'react-map-gl';
 import Geocoder from 'react-map-gl-geocoder';
 import * as turf from '@turf/turf/dist/js';
 import useStore from '../hooks/use-store';
-import utils from '../utils/directions';
 
-import { Typography, Paper, Fab, Avatar, IconButton } from '@material-ui/core';
-import TuneIcon from '@material-ui/icons/Tune';
-import AccountCircle from '@material-ui/icons/AccountCircle';
+import { Typography } from '@material-ui/core';
 import { useTheme } from '@material-ui/core/styles';
 
 import MapDirectionsControl from './map-directions-control';
+import MapRoute from '../components/map-route';
 
 import DegreeLabel, {
   circleColors,
@@ -27,19 +24,19 @@ import DegreeLabel, {
 
 const GeocoderWrapper = observer(({ mapRef, containerRef }) => {
   const { accessToken, setViewport } = useStore((it) => it.mapStore);
-  const { context } = useMapControl({
+  /*const { context } = useMapControl({
     //onDragStart: (evt) => evt.stopPropagation(),
     //onClick: (evt) => evt.stopPropagation(),
-  });
+  });*/
 
   if (!mapRef.current) {
     return <></>;
   }
 
-  const onViewportChange = useCallback(
+  /*const onViewportChange = useCallback(
     (viewport) => utils.flyToViewport(context, {}, { ...viewport }),
     [context]
-  );
+  );*/
 
   return (
     <Geocoder
@@ -52,7 +49,7 @@ const GeocoderWrapper = observer(({ mapRef, containerRef }) => {
   );
 });
 
-function Map() {
+function Map({ children }) {
   const theme = useTheme();
   const {
     accessToken,
@@ -60,6 +57,8 @@ function Map() {
     setViewport,
     crimeData,
     currentPlan,
+    otherPlan,
+    isOtherPlanValid,
     crimePopups,
     showPopup,
     closePopup,
@@ -67,7 +66,7 @@ function Map() {
   } = useStore((it) => it.mapStore);
   const { mode, flickerSwitch } = useStore();
 
-  const trackUserLocation = false;
+  const trackUserLocation = true;
   const auto = true;
 
   const mapRef = useRef();
@@ -186,73 +185,19 @@ function Map() {
           </Popup>
         ))}
         {currentPlan && (
-          <Source
-            id="current-plan-source"
-            type="geojson"
-            data={currentPlan.geojson}
-          >
-            <Layer
-              id="current-plan-route-line-casing"
-              type="line"
-              layout={{ 'line-cap': 'round', 'line-join': 'round' }}
-              paint={{
-                'line-color': theme.palette.primary.main,
-                'line-width': 12,
-                'line-opacity': 1,
-              }}
-              filter={['all', ['in', '$type', 'LineString']]}
-            />
-            <Layer
-              id="current-plan-origin-point"
-              type="circle"
-              paint={{ 'circle-radius': 18, 'circle-color': '#3bb2d0' }}
-              filter={[
-                'all',
-                ['in', '$type', 'Point'],
-                ['in', 'marker-symbol', 'A'],
-              ]}
-            />
-            <Layer
-              id="current-plan-origin-label"
-              type="symbol"
-              layout={{
-                'text-field': 'A',
-                'text-font': ['Open Sans Bold', 'Arial Unicode MS Bold'],
-                'text-size': 15,
-              }}
-              paint={{ 'text-color': '#fff' }}
-              filter={[
-                'all',
-                ['in', '$type', 'Point'],
-                ['in', 'marker-symbol', 'A'],
-              ]}
-            />
-            <Layer
-              id="current-plan-destination-point"
-              type="circle"
-              paint={{ 'circle-radius': 18, 'circle-color': '#8a8bc9' }}
-              filter={[
-                'all',
-                ['in', '$type', 'Point'],
-                ['in', 'marker-symbol', 'B'],
-              ]}
-            />
-            <Layer
-              id="current-plan-destination-label"
-              type="symbol"
-              layout={{
-                'text-field': 'B',
-                'text-font': ['Open Sans Bold', 'Arial Unicode MS Bold'],
-                'text-size': 15,
-              }}
-              paint={{ 'text-color': '#fff' }}
-              filter={[
-                'all',
-                ['in', '$type', 'Point'],
-                ['in', 'marker-symbol', 'B'],
-              ]}
-            />
-          </Source>
+          <MapRoute
+            name="current-plan"
+            geojson={currentPlan.geojson}
+            lineColor={theme.palette.primary.main}
+          />
+        )}
+        {otherPlan && (
+          <MapRoute
+            name="other-plan"
+            geojson={otherPlan.geojson}
+            lineColor={theme.palette.secondary.main}
+            lineOpacity={isOtherPlanValid ? 1 : 0.5}
+          />
         )}
         {mode === 'plan' ? (
           <MapDirectionsControl />
@@ -263,19 +208,22 @@ function Map() {
           />
         )}
         <NavigationControl style={{ right: 10, top: 100 }} />
-        {true && (
-          <GeolocateControl
-            style={{ right: 10, top: 200 }}
-            trackUserLocation={trackUserLocation}
-            auto={auto}
-            showAccuracyCircle={false}
-            positionOptions={{ enableHighAccuracy: true, timeout: 6000 }}
-            onGeolocate={(data) => {
-              console.log(data);
-              setUserCoords(data.coords);
-            }}
-          />
-        )}
+        <GeolocateControl
+          style={{ right: 10, top: 200 }}
+          trackUserLocation={
+            trackUserLocation &&
+            ['login', 'plan', 'list-request'].findIndex((it) => it === mode) ===
+              -1
+          }
+          auto={auto}
+          showAccuracyCircle={false}
+          positionOptions={{ enableHighAccuracy: true, timeout: 6000 }}
+          onGeolocate={(data) => {
+            console.log(data);
+            setUserCoords(data.coords);
+          }}
+        />
+        {children}
       </MapGL>
     </div>
   );

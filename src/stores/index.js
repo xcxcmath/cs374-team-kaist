@@ -3,12 +3,26 @@ import { makeAutoObservable } from 'mobx';
 
 import MapStore from './map-store';
 
+/**
+ * App modes:
+ *
+ * login
+ * profile
+ * main
+ * plan
+ * list-request
+ * see-request
+ * post-request
+ * see-respond
+ * post-report
+ */
+
 class RootStore {
   mapStore = null;
   firebaseStore = null;
 
   flickerSwitch = true;
-  mode = 'main'; // 'main', 'plan', etc..
+  mode = 'main';
   ancherMenuOpen = false;
 
   constructor({ viewport }) {

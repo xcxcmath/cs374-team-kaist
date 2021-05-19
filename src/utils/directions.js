@@ -95,7 +95,7 @@ function durationFormatMin(duration) {
   return `${(duration / 60).toFixed(1)}`;
 }
 
-export default {
+const utils = {
   format,
   coordinateMatch,
   createPoint,
@@ -106,3 +106,5 @@ export default {
   distanceFormatKilo,
   durationFormatMin,
 };
+
+export default utils;

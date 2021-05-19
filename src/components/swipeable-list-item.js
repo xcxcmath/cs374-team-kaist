@@ -128,8 +128,7 @@ const SwipeableListItem = ({
   }
 
   const { className, ...restOfListItemProps } = ListItemProps;
-  const { diff, dragged, dragStartX, isAnimating, side, wrapperMaxHeight } =
-    state;
+  const { diff, dragged, isAnimating, side, wrapperMaxHeight } = state;
   const onDragStartTouch = (e) => {
     const { clientX } = e.touches[0];
     dispatch({ type: 'on-drag-start-touch', payload: { clientX } });

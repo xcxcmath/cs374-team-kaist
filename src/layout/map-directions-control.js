@@ -487,7 +487,7 @@ const Inputs = observer(() => {
                   setMode('main');
                 })}
               >
-                Add
+                Select
               </Button>
             </div>
           )}

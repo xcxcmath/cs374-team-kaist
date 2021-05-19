@@ -88,6 +88,13 @@ function flyToViewport(context, props, opts) {
   onViewportChange(viewState);
 }
 
+function distanceFormatKilo(distance) {
+  return `${(distance / 1000).toFixed(1)}`;
+}
+function durationFormatMin(duration) {
+  return `${(duration / 60).toFixed(1)}`;
+}
+
 export default {
   format,
   coordinateMatch,
@@ -96,4 +103,6 @@ export default {
   wrap,
   roundWithOriginalPrecision,
   flyToViewport,
+  distanceFormatKilo,
+  durationFormatMin,
 };

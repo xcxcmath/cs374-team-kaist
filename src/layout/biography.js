@@ -1,8 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, createElement } from 'react';
+import ReactDOM from 'react-dom';
 import HomeIcon from '@material-ui/icons/Home';
 import PlaceIcon from '@material-ui/icons/Place';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import Fab from '@material-ui/core/Fab';
+import { $mobx } from 'mobx';
+import TextField from '@material-ui/core/TextField';
+
 
 var name = 'Sofia';
 var age = '19';
@@ -12,11 +16,29 @@ var bioText = "I travel 5-10 times a year, my hobbies are: photography, dancing.
 var visitText = "I came to South Korea attend BTS concert"
 var moveText = "I want to get to GS25 convenience store to get some drinks and snacks, because we have a movie night tonight"
 var finalDest = "GS25 convenience store, 160 Cheongsa-ro";
-
+var profilePic = 'https://s7g3.scene7.com/is/image/soloinvest/n00554A?$big_image_web$'
 export default function Biography(props) {
+    // function repMouseEnter(event){
+    //     event.target.style.color="red";
+    // }
+    // function repMouseLeave(event){
+    //     event.target.style.color="";
+    // }
+    const [repDisplay, setRepDisplay] = useState(false);
+    let repStyle = {
+        display: 'none'
+    }
+    if(repDisplay == true){
+        repStyle = {
+            display: 'flex',
+            flexDirection: 'column',
+            marginLeft: '4%',
+            marginRight: '4%'
+        }
+    }
     return <div>
         <div>
-            <img src='https://s7g3.scene7.com/is/image/soloinvest/n00554A?$big_image_web$' style={{width: '100%'}}/>
+            <img src={profilePic} style={{width: '100%'}}/>
         </div>
         <div style={{display: 'flex', alignItems: 'flex-start', width: '100%'}}>
             <div
@@ -49,17 +71,30 @@ export default function Biography(props) {
             <div style={{marginLeft: '4%', textAlign: 'left', fontFamily: 'roboto, sans-serif', fontSize: '20px', color: '#5c5c5c', width:'92%'}}>About myself: {bioText}</div>
         </div>
         <div style={{width: '100%', marginTop: '10px', paddingBottom: '10px', borderBottom: '1px #5c5c5c solid'}}>
-            <div style={{fontFamily: 'roboto, sans-serif'}}>
+            <div style={{fontFamily: 'roboto, sans-serif'}} id="repBtn" onClick={() => setRepDisplay(true)} >
                 Report {name}
+            </div>
+            <div style={repStyle}>
+                <div>
+                    <div style={{alignSelf: 'center'}}>
+                        <TextField id="repText" label="Describe bad behavior" multiline rowsMax={3} fullWidth />
+                    </div>
+                </div>
+                
+                <div style={{marginTop: '7px', display: 'flex', flexDirection: 'row', justifyContent: 'center'}}>
+                    <div onClick={() => setRepDisplay(false)} style={{width: '50%', textAlign: 'center'}}>Cancel</div>
+                    <div style={{width: '50%', textAlign: 'center', borderLeft: '1px #5c5c5c solid'}}>Submit</div>
+                </div>
             </div>
         </div>
         <div style={{width: '100%', height: '80px'}}></div>
-        <div style={{display: 'flex', position: 'fixed', top: '90%', width: '200px', left: '50%', marginLeft: '-100px'}}>
-            <Fab color="primary" variant="extended" style={{marginRight: '6%'}}>
-                <div style={{}}>Accept</div>
-            </Fab>
-            <Fab color="secondary" variant="extended">
+        <div style={{display: 'flex', position: 'fixed', top: 'calc(99% - 50px)', width: '200px', left: '50%', marginLeft: '-100px'}}>
+            
+            <Fab color="secondary" variant="extended" style={{marginRight: '6%'}}>
                 Go&nbsp;Back
+            </Fab>
+            <Fab color="primary" variant="extended">
+                <div style={{}}>Accept</div>
             </Fab>
         </div>
     </div>

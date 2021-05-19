@@ -20,28 +20,58 @@ import {
   Icon,
   InputAdornment,
   TextField,
-  Paper,
   CircularProgress,
   Slider,
   Typography,
   Button,
+  Box,
+  IconButton,
+  Card,
+  CardContent,
+  Collapse,
+  Divider,
+  InputBase,
+  Paper,
+  SvgIcon,
 } from '@material-ui/core';
 import Autocomplete from '@material-ui/lab/Autocomplete';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, useTheme } from '@material-ui/core/styles';
+import CloseIcon from '@material-ui/icons/Close';
 import DegreeLabel from '../components/degree-label';
 
 import utils from '../utils/directions';
 
 const useStyles = makeStyles((theme) => ({
   inputRoot: {
-    padding: '2px 4px',
+    padding: 10,
     display: 'flex',
     flexDirection: 'column',
+    width: 300,
+    borderRadius: 2,
     alignItems: 'center',
-    width: 320,
+    transition: 'width 0.3s, height 0.3s, border 0.3s',
   },
-  input: { marginTop: theme.spacing(2) },
-  slider: { margin: theme.spacing(1), width: 250, height: 10 },
+  controlsRoot: {
+    width: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  autocompleteRoot: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-around',
+  },
+  slider: {
+    margin: '0 auto',
+    width: '75%',
+    height: '50%',
+  },
+  messages: {
+    margin: '5px 0',
+  },
+  input: {
+    margin: '5px 0',
+  },
 }));
 
 const request = new XMLHttpRequest();
@@ -49,11 +79,12 @@ const api = 'https://api.mapbox.com/geocoding/v5/mapbox.places/';
 
 const Inputs = observer(() => {
   const classes = useStyles();
+  const theme = useTheme();
   const mds = useContext(MapDirectionsStore);
   const context = useContext(MapContext);
   const { viewport } = context;
   const { setMode, flickerSwitch } = useStore();
-  const { accessToken, crimeData, setCurrentPlan } = useStore(
+  const { accessToken, crimeData, setCurrentPlan, userCoords } = useStore(
     (it) => it.mapStore
   );
   const circles = useRef([{}, {}, {}]);
@@ -162,7 +193,7 @@ const Inputs = observer(() => {
             ],
             {
               padding: {
-                top: routePadding + 100,
+                top: routePadding + 150,
                 bottom: routePadding,
                 left: routePadding,
                 right: routePadding,
@@ -192,7 +223,8 @@ const Inputs = observer(() => {
     options,
     loading,
     label,
-    icon
+    icon,
+    buttonNotLoading
   ) => (
     <Autocomplete
       value={value}
@@ -204,6 +236,19 @@ const Inputs = observer(() => {
       style={{ width: '100%' }}
       getOptionLabel={(option) => option.place_name}
       getOptionSelected={(option, value) => option.id === value.id}
+      renderOption={(option) => {
+        const splitted = option.place_name.split(',');
+        const main = splitted[0];
+        const others = splitted.slice(1).join(',');
+        return (
+          <div>
+            <Typography variant="body1" style={{ fontWeight: 'bold' }}>
+              {main}
+            </Typography>
+            <Typography variant="body2">{others}</Typography>
+          </div>
+        );
+      }}
       blurOnSelect
       size="small"
       renderInput={(params) => (
@@ -219,9 +264,14 @@ const Inputs = observer(() => {
             ),
             endAdornment: (
               <>
-                {loading ? (
-                  <CircularProgress color="inherit" size={20} />
-                ) : null}
+                <InputAdornment>
+                  {loading ? (
+                    <CircularProgress color="inherit" size={20} />
+                  ) : (
+                    buttonNotLoading
+                  )}
+                </InputAdornment>
+
                 {params.InputProps.endAdornment}
               </>
             ),
@@ -232,129 +282,202 @@ const Inputs = observer(() => {
   );
 
   return (
-    <Paper component="form" className={classes.inputRoot}>
-      <Typography gutterBottom>Crime Hotspots Avoidance</Typography>
-      <Slider
-        className={classes.slider}
-        marks={[
-          {
-            value: -2,
-            label: <DegreeLabel degree={3} flickerSwitch={flickerSwitch} />,
-          },
-          {
-            value: -1,
-            label: <DegreeLabel degree={2} flickerSwitch={flickerSwitch} />,
-          },
-          {
-            value: 0,
-            label: <DegreeLabel degree={1} flickerSwitch={flickerSwitch} />,
-          },
-          {
-            value: -3,
-            label: (
-              <span style={{ textAlign: 'left', color: 'red' }}>Allow all</span>
-            ),
-          },
-        ]}
-        min={-3}
-        max={0}
-        step={1}
-        value={-tempMaximumDegree}
-        onChange={(e, v) => setTempMaximumDegree(-v)}
-        onChangeCommitted={(e, v) => {
-          mds.setMaximumDegree(-v);
-        }}
-      />
-      {renderAutocomplete(
-        originValue,
-        (e, v) => {
-          console.log(v);
-          setOriginValue(v);
-          if (v?.center) {
-            mds.createOrigin(v.center);
-            animateToCoordinates(v.center);
-          } else {
-            mds.clearOrigin();
-          }
-        },
-        originInputValue,
-        (e, v) => {
-          setOriginInputValue(v);
-          geocode(
-            v,
-            accessToken,
-            () => setOriginLoading(true),
-            (features) => {
-              setOriginLoading(false);
-              setOriginOptions(features);
-            }
-          );
-        },
-        originOptions,
-        originLoading,
-        'Origin',
-        <Icon>
-          <img
-            style={{ backgroundColor: '#3bb2d0' }}
-            src="icons/depart.svg"
-            alt=""
-          />
-        </Icon>
-      )}
-      {renderAutocomplete(
-        destinationValue,
-        (e, v) => {
-          setDestinationValue(v);
-          if (v?.center) {
-            mds.createDestination(v.center);
-            animateToCoordinates(v.center);
-          } else {
-            mds.clearDestination();
-          }
-        },
-        destinationInputValue,
-        (e, v) => {
-          setDestinationInputValue(v);
-          geocode(
-            v,
-            accessToken,
-            () => setDestinationLoading(true),
-            (features) => {
-              setDestinationLoading(false);
-              setDestinationOptions(features);
-            }
-          );
-        },
-        destinationOptions,
-        destinationLoading,
-        'Destination',
-        <Icon>
-          <img
-            style={{ backgroundColor: '#8a8bc9' }}
-            src="icons/arrive.svg"
-            alt=""
-          />
-        </Icon>
-      )}
-      {status === 'success' && routeToAdd && (
-        <div>
-          {`${(routeToAdd.distance / 1000).toFixed(1)} km, ${(
-            routeToAdd.duration / 60
-          ).toFixed(1)} min`}
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={action(() => {
-              setCurrentPlan(routeToAdd);
-              setMode('main');
-            })}
-          >
-            Add
-          </Button>
-        </div>
-      )}
-      {status === 'fail' && <div>Failed to find your path...</div>}
-    </Paper>
+    <Card
+      style={{
+        borderWidth: 3,
+        borderStyle: 'solid',
+        borderColor:
+          status === 'success'
+            ? theme.palette.success.main
+            : status === 'fail'
+            ? theme.palette.error.main
+            : theme.palette.primary.main,
+      }}
+    >
+      <IconButton
+        size="small"
+        onClick={() => setMode('main')}
+        style={{ position: 'absolute', top: 5, right: 5 }}
+      >
+        <CloseIcon />
+      </IconButton>
+      <CardContent className={classes.inputRoot}>
+        <Box className={classes.controlsRoot}>
+          <Box className={classes.slider}>
+            <Typography variant="body2">Crime hotspot avoidance</Typography>
+            <Slider
+              marks={[
+                {
+                  value: -2,
+                  label: (
+                    <DegreeLabel degree={3} flickerSwitch={flickerSwitch} />
+                  ),
+                },
+                {
+                  value: -1,
+                  label: (
+                    <DegreeLabel degree={2} flickerSwitch={flickerSwitch} />
+                  ),
+                },
+                {
+                  value: 0,
+                  label: (
+                    <DegreeLabel degree={1} flickerSwitch={flickerSwitch} />
+                  ),
+                },
+                {
+                  value: -3,
+                  label: (
+                    <span style={{ textAlign: 'left', color: 'red' }}>
+                      Allow all
+                    </span>
+                  ),
+                },
+              ]}
+              min={-3}
+              max={0}
+              step={1}
+              value={-tempMaximumDegree}
+              onChange={(e, v) => setTempMaximumDegree(-v)}
+              onChangeCommitted={(e, v) => {
+                mds.setMaximumDegree(-v);
+              }}
+            />
+          </Box>
+          <Box className={classes.autocompleteRoot}>
+            {renderAutocomplete(
+              originValue,
+              (e, v) => {
+                console.log(v);
+                setOriginValue(v);
+                if (v?.center) {
+                  mds.createOrigin(v.center);
+                  animateToCoordinates(v.center);
+                } else {
+                  mds.clearOrigin();
+                }
+              },
+              originInputValue,
+              (e, v) => {
+                setOriginInputValue(v);
+                geocode(
+                  v,
+                  accessToken,
+                  () => setOriginLoading(true),
+                  (features) => {
+                    setOriginLoading(false);
+                    setOriginOptions(features);
+                  }
+                );
+              },
+              originOptions,
+              originLoading,
+              '',
+              <Icon size="small">
+                <img
+                  style={{ backgroundColor: '#3bb2d0', borderRadius: '50%' }}
+                  src="icons/depart.svg"
+                  alt=""
+                />
+              </Icon>,
+              <IconButton
+                size="small"
+                onClick={() => {
+                  if (userCoords) {
+                    geocode(
+                      `${userCoords.longitude}, ${userCoords.latitude}`,
+                      accessToken,
+                      () => setOriginLoading(true),
+                      (features) => {
+                        setOriginLoading(false);
+                        setOriginOptions(features);
+                        if (features?.length) {
+                          setOriginValue(features[0]);
+                          if (features[0].center) {
+                            mds.createOrigin(features[0].center);
+                            animateToCoordinates(features[0].center);
+                          } else {
+                            mds.clearOrigin();
+                          }
+                        }
+                      }
+                    );
+                  }
+                }}
+              >
+                <SvgIcon viewBox="0 0 20 20">
+                  <path
+                    d={`M10 4C9 4 9 5 9 5v.1A5 5 0 0 0 5.1 9H5s-1 0-1 1 1 1 1 1h.1A5 5 0 0 0 9 14.9v.1s0 1 1 1 1-1 1-1v-.1a5 5 0 0 0 3.9-3.9h.1s1 0 1-1-1-1-1-1h-.1A5 5 0 0 0 11 5.1V5s0-1-1-1zm0 2.5a3.5 3.5 0 1 1 0 7 3.5 3.5 0 1 1 0-7z`}
+                  />
+                  <circle id="dot" cx="10" cy="10" r="2" />
+                </SvgIcon>
+              </IconButton>
+            )}
+            {renderAutocomplete(
+              destinationValue,
+              (e, v) => {
+                setDestinationValue(v);
+                if (v?.center) {
+                  mds.createDestination(v.center);
+                  animateToCoordinates(v.center);
+                } else {
+                  mds.clearDestination();
+                }
+              },
+              destinationInputValue,
+              (e, v) => {
+                setDestinationInputValue(v);
+                geocode(
+                  v,
+                  accessToken,
+                  () => setDestinationLoading(true),
+                  (features) => {
+                    setDestinationLoading(false);
+                    setDestinationOptions(features);
+                  }
+                );
+              },
+              destinationOptions,
+              destinationLoading,
+              '',
+              <Icon>
+                <img
+                  style={{ backgroundColor: '#8a8bc9', borderRadius: '50%' }}
+                  src="icons/arrive.svg"
+                  alt=""
+                />
+              </Icon>,
+              <></>
+            )}
+          </Box>
+        </Box>
+        <Collapse
+          in={status === 'success' || status === 'fail'}
+          unmountOnExit
+          timeout="auto"
+          className={classes.messages}
+        >
+          {status === 'success' && routeToAdd && (
+            <div>
+              {`${(routeToAdd.distance / 1000).toFixed(1)} km, ${(
+                routeToAdd.duration / 60
+              ).toFixed(1)} min`}
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={action(() => {
+                  setCurrentPlan(routeToAdd);
+                  setMode('main');
+                })}
+              >
+                Add
+              </Button>
+            </div>
+          )}
+          {status === 'fail' && <div>Failed to find your path...</div>}
+        </Collapse>
+      </CardContent>
+    </Card>
   );
 });
 
@@ -413,7 +536,6 @@ export default observer(function MapDirectionsControl() {
     <>
       <div
         ref={containerRef}
-        className="mapboxgl-ctrl-directions mapboxgl-ctrl"
         style={{
           backgroundColor: 'white',
           boxShadow: '1px',

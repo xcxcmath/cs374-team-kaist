@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { observer } from 'mobx-react';
 import MapGL, {
   NavigationControl,
@@ -6,11 +6,17 @@ import MapGL, {
   Source,
   Layer,
   Popup,
+  _useMapControl as useMapControl,
 } from 'react-map-gl';
+import Geocoder from 'react-map-gl-geocoder';
 import * as turf from '@turf/turf/dist/js';
 import useStore from '../hooks/use-store';
+import utils from '../utils/directions';
 
-import { Typography } from '@material-ui/core';
+import { Typography, Paper, Fab, Avatar, IconButton } from '@material-ui/core';
+import TuneIcon from '@material-ui/icons/Tune';
+import AccountCircle from '@material-ui/icons/AccountCircle';
+import { useTheme } from '@material-ui/core/styles';
 
 import MapDirectionsControl from './map-directions-control';
 
@@ -19,17 +25,54 @@ import DegreeLabel, {
   circleLabelColors,
 } from '../components/degree-label';
 
+const GeocoderWrapper = observer(({ mapRef, containerRef }) => {
+  const { accessToken, setViewport } = useStore((it) => it.mapStore);
+  const { context } = useMapControl({
+    //onDragStart: (evt) => evt.stopPropagation(),
+    //onClick: (evt) => evt.stopPropagation(),
+  });
+
+  if (!mapRef.current) {
+    return <></>;
+  }
+
+  const onViewportChange = useCallback(
+    (viewport) => utils.flyToViewport(context, {}, { ...viewport }),
+    [context]
+  );
+
+  return (
+    <Geocoder
+      mapRef={mapRef}
+      containerRef={containerRef}
+      onViewportChange={setViewport}
+      mapboxApiAccessToken={accessToken}
+      position="top-left"
+    />
+  );
+});
+
 function Map() {
-  const { accessToken, viewport, setViewport, crimeData, currentPlan } =
-    useStore((it) => it.mapStore);
+  const theme = useTheme();
+  const {
+    accessToken,
+    viewport,
+    setViewport,
+    crimeData,
+    currentPlan,
+    crimePopups,
+    showPopup,
+    closePopup,
+    setUserCoords,
+  } = useStore((it) => it.mapStore);
   const { mode, flickerSwitch } = useStore();
 
   const trackUserLocation = false;
-  const auto = false;
+  const auto = true;
 
   const mapRef = useRef();
+  const geocoderContainerRef = useRef();
   const [circles, setCircles] = useState({});
-  const [popupCrimeProps, setPopupCrimeProps] = useState(null);
 
   useEffect(() => {
     const allFeatures =
@@ -57,10 +100,19 @@ function Map() {
       style={{
         position: 'absolute',
         width: '100vw',
-        height: '92vh',
+        height: '100vh',
         zIndex: -10,
       }}
     >
+      <div
+        ref={geocoderContainerRef}
+        style={{
+          position: 'absolute',
+          top: 10,
+          left: 10,
+          width: '50%',
+        }}
+      />
       <MapGL
         ref={mapRef}
         {...viewport}
@@ -75,7 +127,7 @@ function Map() {
             (it) => it.layer.source === 'crime-data-source'
           );
           if (clickedCrimeList.length) {
-            setPopupCrimeProps(clickedCrimeList[0].properties);
+            showPopup(clickedCrimeList[0].properties.id);
           }
           console.log(e.features);
         }}
@@ -112,25 +164,28 @@ function Map() {
               />
             ))}
         </Source>
-        {popupCrimeProps !== null && (
+        {crimePopups.map((crime) => (
           <Popup
-            longitude={popupCrimeProps.longitude}
-            latitude={popupCrimeProps.latitude}
-            closeButton={true}
-            closeOnClick={false}
-            onClose={() => setPopupCrimeProps(null)}
+            key={`crime-popup-${crime.id}`}
+            longitude={crime.coordinates[0]}
+            latitude={crime.coordinates[1]}
+            closeButton={false}
+            closeOnClick={true}
+            onClose={() => closePopup(crime.id)}
           >
-            {popupCrimeProps.category}
-            <DegreeLabel
-              degree={popupCrimeProps.degree}
-              flickerSwitch={flickerSwitch}
-            />
-            <Typography variant="body1">
-              {popupCrimeProps.description}
-            </Typography>
+            <div style={{ textAlign: 'left' }}>
+              <Typography variant="h6">
+                {crime.category}
+                <DegreeLabel
+                  degree={crime.degree}
+                  flickerSwitch={flickerSwitch}
+                />
+              </Typography>
+              <Typography variant="body2">{crime.description}</Typography>
+            </div>
           </Popup>
-        )}
-        {currentPlan !== null && (
+        ))}
+        {currentPlan && (
           <Source
             id="current-plan-source"
             type="geojson"
@@ -141,7 +196,7 @@ function Map() {
               type="line"
               layout={{ 'line-cap': 'round', 'line-join': 'round' }}
               paint={{
-                'line-color': '#4c45b0',
+                'line-color': theme.palette.primary.main,
                 'line-width': 12,
                 'line-opacity': 1,
               }}
@@ -199,16 +254,25 @@ function Map() {
             />
           </Source>
         )}
-        {mode === 'plan' && <MapDirectionsControl />}
-        <NavigationControl style={{ right: 10, top: 10 }} />
+        {mode === 'plan' ? (
+          <MapDirectionsControl />
+        ) : (
+          <GeocoderWrapper
+            mapRef={mapRef}
+            containerRef={geocoderContainerRef}
+          />
+        )}
+        <NavigationControl style={{ right: 10, top: 100 }} />
         {true && (
           <GeolocateControl
-            style={{ right: 10, top: 100 }}
+            style={{ right: 10, top: 200 }}
             trackUserLocation={trackUserLocation}
             auto={auto}
+            showAccuracyCircle={false}
             positionOptions={{ enableHighAccuracy: true, timeout: 6000 }}
             onGeolocate={(data) => {
               console.log(data);
+              setUserCoords(data.coords);
             }}
           />
         )}

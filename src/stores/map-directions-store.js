@@ -94,6 +94,7 @@ class MapDirectionsStore {
     this.waypoints = [];
     this.events = {};
     this.directions = [];
+    request.abort();
   }
 
   fetchSafeDirections(circles, onSuccess, onFail, maximumTrial) {

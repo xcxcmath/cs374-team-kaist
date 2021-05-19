@@ -3,6 +3,7 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import Fab from '@material-ui/core/Fab';
 import TimerIcon from '@material-ui/icons/Timer';
+import { PowerInputSharp } from '@material-ui/icons';
 
 //example call: 
       // <SwipeCard 
@@ -14,6 +15,17 @@ import TimerIcon from '@material-ui/icons/Timer';
       //   timeLeft = "3 min"
       // />
 export default function SwipeCard(props) {
+  if(props.empty == true){
+    return <div>
+      <div style={{display: 'flex', flexDirection:'column', backgroundColor: '#FBEEEE', width: '85%', height: '100px', position: 'fixed', top: '60px', marginLeft: '5px'}}>
+        <div style={{marginLeft: '4%', marginRight: '4%', textAlign: 'center'}}>No companions available. Do you want to create new request?</div>
+        <div style={{marginLeft: 'auto', marginRight: 'auto', marginTop: '5%'}}>
+          <div style={{marginRight: '25px', display: 'inline'}}>Yes</div>
+          <div style={{display: 'inline'}}>No</div>
+        </div>
+      </div>
+    </div>
+  }
   return <div>
     <div style={{display: 'flex', backgroundColor: '#FBEEEE', width: '85%', height: '100px', position: 'fixed', top: '60px', marginLeft: '5px'}}>
       <div style={{display:'flex', alignItems: 'center'}}><ChevronLeftIcon color='action'/></div>

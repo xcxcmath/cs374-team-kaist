@@ -43,7 +43,7 @@ import utils from '../utils/directions';
 
 const useStyles = makeStyles((theme) => ({
   inputRoot: {
-    padding: 10,
+    padding: '5px !important',
     display: 'flex',
     flexDirection: 'column',
     width: 300,
@@ -67,7 +67,8 @@ const useStyles = makeStyles((theme) => ({
     height: '50%',
   },
   messages: {
-    margin: '5px 0',
+    marginTop: 5,
+    width: '100%',
   },
   input: {
     margin: '5px 0',
@@ -113,6 +114,7 @@ const Inputs = observer(() => {
             ...route,
             origin: originValue,
             destination: destinationValue,
+            maximumDegree: mds.maximumDegree,
             geojson,
           });
           setStatus('success');
@@ -380,38 +382,44 @@ const Inputs = observer(() => {
                   alt=""
                 />
               </Icon>,
-              <IconButton
-                size="small"
-                onClick={() => {
-                  if (userCoords) {
-                    geocode(
-                      `${userCoords.longitude}, ${userCoords.latitude}`,
-                      accessToken,
-                      () => setOriginLoading(true),
-                      (features) => {
-                        setOriginLoading(false);
-                        setOriginOptions(features);
-                        if (features?.length) {
-                          setOriginValue(features[0]);
-                          if (features[0].center) {
-                            mds.createOrigin(features[0].center);
-                            animateToCoordinates(features[0].center);
-                          } else {
-                            mds.clearOrigin();
+              <>
+                {originInputValue ? (
+                  <></>
+                ) : (
+                  <IconButton
+                    size="small"
+                    onClick={() => {
+                      if (userCoords) {
+                        geocode(
+                          `${userCoords.longitude}, ${userCoords.latitude}`,
+                          accessToken,
+                          () => setOriginLoading(true),
+                          (features) => {
+                            setOriginLoading(false);
+                            setOriginOptions(features);
+                            if (features?.length) {
+                              setOriginValue(features[0]);
+                              if (features[0].center) {
+                                mds.createOrigin(features[0].center);
+                                animateToCoordinates(features[0].center);
+                              } else {
+                                mds.clearOrigin();
+                              }
+                            }
                           }
-                        }
+                        );
                       }
-                    );
-                  }
-                }}
-              >
-                <SvgIcon viewBox="0 0 20 20">
-                  <path
-                    d={`M10 4C9 4 9 5 9 5v.1A5 5 0 0 0 5.1 9H5s-1 0-1 1 1 1 1 1h.1A5 5 0 0 0 9 14.9v.1s0 1 1 1 1-1 1-1v-.1a5 5 0 0 0 3.9-3.9h.1s1 0 1-1-1-1-1-1h-.1A5 5 0 0 0 11 5.1V5s0-1-1-1zm0 2.5a3.5 3.5 0 1 1 0 7 3.5 3.5 0 1 1 0-7z`}
-                  />
-                  <circle id="dot" cx="10" cy="10" r="2" />
-                </SvgIcon>
-              </IconButton>
+                    }}
+                  >
+                    <SvgIcon viewBox="0 0 20 20">
+                      <path
+                        d={`M10 4C9 4 9 5 9 5v.1A5 5 0 0 0 5.1 9H5s-1 0-1 1 1 1 1 1h.1A5 5 0 0 0 9 14.9v.1s0 1 1 1 1-1 1-1v-.1a5 5 0 0 0 3.9-3.9h.1s1 0 1-1-1-1-1-1h-.1A5 5 0 0 0 11 5.1V5s0-1-1-1zm0 2.5a3.5 3.5 0 1 1 0 7 3.5 3.5 0 1 1 0-7z`}
+                      />
+                      <circle id="dot" cx="10" cy="10" r="2" />
+                    </SvgIcon>
+                  </IconButton>
+                )}
+              </>
             )}
             {renderAutocomplete(
               destinationValue,
@@ -458,10 +466,19 @@ const Inputs = observer(() => {
           className={classes.messages}
         >
           {status === 'success' && routeToAdd && (
-            <div>
-              {`${(routeToAdd.distance / 1000).toFixed(1)} km, ${(
-                routeToAdd.duration / 60
-              ).toFixed(1)} min`}
+            <div style={{ display: 'flex', justifyContent: 'space-evenly' }}>
+              <span>
+                <Typography variant="body1">
+                  {`${(routeToAdd.distance / 1000).toFixed(1)}`}
+                </Typography>
+                <Typography variant="body2">km</Typography>
+              </span>
+              <span>
+                <Typography variant="body1">
+                  {`${(routeToAdd.duration / 60).toFixed(1)}`}
+                </Typography>
+                <Typography variant="body2">min.</Typography>
+              </span>
               <Button
                 variant="contained"
                 color="primary"
@@ -474,7 +491,14 @@ const Inputs = observer(() => {
               </Button>
             </div>
           )}
-          {status === 'fail' && <div>Failed to find your path...</div>}
+          {status === 'fail' && (
+            <Typography
+              variant="body2"
+              style={{ color: theme.palette.error.main }}
+            >
+              Failed to find..
+            </Typography>
+          )}
         </Collapse>
       </CardContent>
     </Card>

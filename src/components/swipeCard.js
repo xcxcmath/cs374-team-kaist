@@ -15,6 +15,7 @@ import CloseIcon from '@material-ui/icons/Close';
       //   travelText = "Going to GS25"
       //   timeLeft = "3 min"
       // />
+      // backgroundColor: '#FBEEEE'
 export default function SwipeCard(props) {
   var [dots, setDots] = useState('.')
   var timeLeft;
@@ -32,7 +33,7 @@ export default function SwipeCard(props) {
         }
     }, 1100);
     return <div>
-    <div style={{display: 'flex', flexDirection:'row', backgroundColor: '#FBEEEE', width: '85%', height: '100px', position: 'fixed', top: '60px', marginLeft: '5px'}}>
+    <div style={{display: 'flex', flexDirection:'row', backgroundColor: 'white', width: '85%', height: '100px', position: 'fixed', top: '60px', marginLeft: '5px'}}>
       <div style={{width: '100%', display: 'flex', alignSelf: 'center', height: '25px'}}>
         <div style= {{width: '100%', textAlign: 'center', fontFamily: 'roboto, sans-serif'}}>Waiting for responses{dots}</div>
         
@@ -43,7 +44,7 @@ export default function SwipeCard(props) {
   }
   else if(props.empty == true){
     return <div>
-      <div style={{display: 'flex', flexDirection:'column', backgroundColor: '#FBEEEE', width: '85%', height: '100px', position: 'fixed', top: '60px', marginLeft: '5px'}}>
+      <div style={{display: 'flex', flexDirection:'column', backgroundColor: 'white', width: '85%', height: '100px', position: 'fixed', top: '60px', marginLeft: '5px'}}>
         <div style={{marginLeft: '4%', marginRight: '4%', textAlign: 'center', fontFamily: 'roboto, sans-serif'}}>No companions available. Do you want to create new request?</div>
         <div style={{marginLeft: 'auto', marginRight: 'auto', marginTop: '10px'}}>
           <div style={{marginRight: '25px', display: 'inline', fontFamily: 'roboto, sans-serif'}}>Yes</div>
@@ -60,7 +61,7 @@ export default function SwipeCard(props) {
     </div>
   }
   return <div>
-    <div style={{display: 'flex', backgroundColor: '#FBEEEE', width: '85%', height: '100px', position: 'fixed', top: '60px', marginLeft: '5px'}}>
+    <div style={{display: 'flex', backgroundColor: 'white', width: '85%', height: '100px', position: 'fixed', top: '60px', marginLeft: '5px'}}>
       <div style={{display:'flex', alignItems: 'center'}}><ChevronLeftIcon color='action'/></div>
       <div style={{display: 'flex', height: '100%', alignItems: 'center'}}>
         <img src={props.image} style={{ height: '88%'}}></img>

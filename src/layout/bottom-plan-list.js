@@ -16,7 +16,7 @@ import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
 import DirectionsIcon from '@material-ui/icons/Directions';
 import DirectionsWalkIcon from '@material-ui/icons/DirectionsWalk';
 import PeopleIcon from '@material-ui/icons/PeopleAlt';
-import DeleteIcon from '@material-ui/icons/Delete';
+import DeleteIcon from '@material-ui/icons/DeleteForever';
 import { useTheme } from '@material-ui/core/styles';
 
 import extent from 'turf-extent';
@@ -191,17 +191,22 @@ export default observer(function BottomPlanList() {
               </Typography>
               <span style={{ display: 'flex', alignItems: 'center' }}>
                 <DirectionsWalkIcon />
-                {`${utils.distanceFormatKilo(
-                  currentPlan.distance
-                )} km, ${utils.durationFormatMin(
-                  currentPlan.duration
-                )} min. to walk`}
+                <span>
+                  <strong>{`${utils.distanceFormatKilo(
+                    currentPlan.distance
+                  )}`}</strong>{' '}
+                  km,{' '}
+                  <strong>{`${utils.durationFormatMin(
+                    currentPlan.duration
+                  )}`}</strong>{' '}
+                  min.
+                </span>
               </span>
             </div>
           </CardContent>
           <CardActions>
             <Button
-              variant="contained"
+              variant="outlined"
               color="primary"
               startIcon={<PeopleIcon />}
               onClick={(e) => {

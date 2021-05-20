@@ -6,6 +6,7 @@ import Radar from './radar';
 import BottomPlanList from './bottom-plan-list';
 import Map from './map';
 import ScreenBorder from './screen-border';
+import BottomButtonList from './bottom-button-list';
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         <Radar />
         <BottomPlanList />
       </Map>
+      <BottomButtonList />
     </div>
   );
 }

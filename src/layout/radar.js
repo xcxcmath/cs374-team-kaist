@@ -6,13 +6,10 @@ import { observer } from 'mobx-react';
 import { Source, Layer } from 'react-map-gl';
 import * as turf from '@turf/turf/dist/js';
 
-import { useTheme } from '@material-ui/core/styles';
-
 export default observer(function Radar() {
   const { crimeData, radarRadius, userCoords, addNear } = useStore(
     (it) => it.mapStore
   );
-  const theme = useTheme();
 
   const [theta, setTheta] = useState(0);
   useEffect(() => {

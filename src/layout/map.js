@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useRef } from 'react';
 import { observer } from 'mobx-react';
 import MapGL, {
   NavigationControl,
@@ -8,7 +8,6 @@ import MapGL, {
   Popup,
 } from 'react-map-gl';
 import Geocoder from 'react-map-gl-geocoder';
-import * as turf from '@turf/turf/dist/js';
 import useStore from '../hooks/use-store';
 
 import { Typography } from '@material-ui/core';

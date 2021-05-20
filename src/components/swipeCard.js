@@ -17,6 +17,7 @@ import CloseIcon from '@material-ui/icons/Close';
       // />
 export default function SwipeCard(props) {
   var [dots, setDots] = useState('.')
+  var timeLeft;
   if(props.empty == true && props.waiting == true){
     
     setTimeout(function () {
@@ -52,6 +53,12 @@ export default function SwipeCard(props) {
       </div>
     </div>
   }
+  else if(props.waiting == false){
+    timeLeft = <div style={{display: 'flex', width: '70px', backgroundColor: 'lightblue', height: '35px', textAlign: 'center', marginLeft: '10px'}}>
+      <div style={{alignSelf: 'center', marginLeft: '1px'}}><TimerIcon size='small'/></div>
+      <div style={{alignSelf: 'center', fontSize: '16px'}}>{props.timeLeft}</div>
+    </div>
+  }
   return <div>
     <div style={{display: 'flex', backgroundColor: '#FBEEEE', width: '85%', height: '100px', position: 'fixed', top: '60px', marginLeft: '5px'}}>
       <div style={{display:'flex', alignItems: 'center'}}><ChevronLeftIcon color='action'/></div>
@@ -65,11 +72,7 @@ export default function SwipeCard(props) {
         <div style={{fontFamily: 'roboto, sans-serif', fontSize: '16px', marginTop: '3px', textAlign: 'left'}}>{props.travelText}</div>
         <div style={{display: 'flex', flexDirection: 'row', marginTop: '8px', fontFamily: 'roboto, sans-serif'}}>
           <div style={{}}><Fab color='primary' variant='extended' size='small'>Go&nbsp;to&nbsp;Bio</Fab></div>
-          <div style={{display: 'flex', width: '70px', backgroundColor: 'lightblue', height: '35px', textAlign: 'center', marginLeft: '10px'}}>
-
-            <div style={{alignSelf: 'center', marginLeft: '1px'}}><TimerIcon size='small'/></div>
-            <div style={{alignSelf: 'center', fontSize: '16px'}}>{props.timeLeft}</div>
-            </div>
+          {timeLeft}
         </div>
         
       </div>

@@ -6,7 +6,7 @@ export default function NewRequest(props) {
     var alertDiv;
     const [alert, setAlert] = useState(false);
     if(alert == true){
-        alertDiv = <RequestAlert/>;
+        alertDiv = <RequestAlert message="request was successfully created"/>;
     }
     return <div>
         <div style={{display: 'flex', flexDirection: 'column', width: '100%', height: '35px', textAlign: 'center', borderBottom: '2px #5c5c5c solid', fontFamily: 'roboto, sans-serif', fontSize: "20px", justifyContent:'center', color: 'black'}}>New request</div>

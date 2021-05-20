@@ -77,3 +77,30 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+### Database structure
+User (ID) {  
+    ID: string  
+    name: string  
+    age: string  
+    picture: URL // I suggest that we use pictures from internet, because uploading and storing custom images might be hard  
+    home country: string  
+    gender: string  
+    biography: string  
+    companion: [ID: string, status: string] // status can be: approved  /  waiting (when you wait for users approval)  /  respond (when user is waiting for your approval)  
+    notification: [radius: integer, distance: radius] //TODO add all data needed for notification  
+    contact_info: [phone number: string, KakaoID: string]  
+}  
+  
+Request (ID = User ID) {  
+    user_ID: string  
+    travel_text: string  
+    visit_text: string  
+    path: \[point A, point B, danger_degree: integer\]  
+}  
+  
+Report (random ID) {  
+    ID_snitch: string  
+    ID_reported: string  
+    report_text: string  
+}  

@@ -3,11 +3,26 @@ import { makeAutoObservable } from 'mobx';
 
 import MapStore from './map-store';
 
+/**
+ * App modes:
+ *
+ * login
+ * profile
+ * main
+ * plan
+ * list-request
+ * see-request
+ * post-request
+ * see-respond
+ * post-report
+ */
+
 class RootStore {
   mapStore = null;
   firebaseStore = null;
 
-  mode = 'main'; // 'main', 'plan', etc..
+  flickerSwitch = true;
+  mode = 'main';
   ancherMenuOpen = false;
 
   constructor({ viewport }) {
@@ -16,6 +31,12 @@ class RootStore {
     this.setAncherMenuOpen = this.setAncherMenuOpen.bind(this);
 
     this.mapStore = new MapStore(viewport);
+
+    setInterval(() => this.toggleFlickerSwitch(), 1000);
+  }
+
+  toggleFlickerSwitch() {
+    this.flickerSwitch = !this.flickerSwitch;
   }
 
   setMode(mode) {

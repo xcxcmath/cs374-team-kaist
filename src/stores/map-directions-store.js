@@ -3,7 +3,7 @@ import { makeAutoObservable, action } from 'mobx';
 
 import utils from '../utils/directions';
 import * as turf from '@turf/turf/dist/js';
-import polyline from '@mapbox/polyline';
+import polyline, { decode } from '@mapbox/polyline';
 
 const request = new XMLHttpRequest();
 
@@ -49,7 +49,7 @@ class MapDirectionsStore {
   error = null;
 
   // maximum degree
-  maximumDegree = 3;
+  maximumDegree = 1;
   isValidRoute = false;
   trial = 0;
 
@@ -94,6 +94,7 @@ class MapDirectionsStore {
     this.waypoints = [];
     this.events = {};
     this.directions = [];
+    request.abort();
   }
 
   fetchSafeDirections(circles, onSuccess, onFail, maximumTrial) {
@@ -128,7 +129,32 @@ class MapDirectionsStore {
         const polygon = turf.bboxPolygon(bbox);
 
         if (turf.booleanDisjoint(targetCircles, routeLine)) {
-          onSuccess({ route: route[0] });
+          const { origin, destination, directions } = this;
+          const geojson = {
+            type: 'FeatureCollection',
+            features: [origin, destination].filter((d) => d.geometry),
+          };
+          if (directions.length) {
+            const feature = directions[0];
+            const features = [];
+            const decoded = decode(feature.geometry, 5).map((c) => c.reverse());
+            decoded.forEach((c) => {
+              var previous = features[features.length - 1];
+              if (previous) {
+                previous?.geometry.coordinates.push(c);
+              } else {
+                features.push({
+                  geometry: { type: 'LineString', coordinates: [c] },
+                  properties: {
+                    'route-index': 0,
+                    route: 'selected',
+                  },
+                });
+              }
+            });
+            geojson.features = geojson.features.concat(features);
+          }
+          onSuccess({ route: route[0], geojson });
           this.isValidRoute = true;
           this.events['route'] = [];
           this.events['fail'] = [];
@@ -136,7 +162,7 @@ class MapDirectionsStore {
           ++this.trial;
           const polygon2 = turf.transformScale(
             polygon,
-            (this.trial + 1) * 0.075 + 0.5
+            (this.trial + 1) * 0.1 + 0.5
           );
           const bbox2 = turf.bbox(polygon2);
           const randomWaypoint = turf.randomPoint(1, { bbox: bbox2 });
@@ -243,8 +269,7 @@ class MapDirectionsStore {
 
     request.onerror = action(() => {
       this.setDirections([]);
-      //this.setError(JSON.parse(request.responseText).message);
-      this.setError('what?');
+      this.setError(JSON.parse(request.responseText).message);
     });
 
     request.send();

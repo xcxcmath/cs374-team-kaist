@@ -1,66 +1,85 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useRef } from 'react';
 import { observer } from 'mobx-react';
 import MapGL, {
   NavigationControl,
   GeolocateControl,
   Source,
   Layer,
+  Popup,
 } from 'react-map-gl';
-import * as turf from '@turf/turf/dist/js';
+import Geocoder from 'react-map-gl-geocoder';
 import useStore from '../hooks/use-store';
 
+import { Typography } from '@material-ui/core';
+import { useTheme } from '@material-ui/core/styles';
+
 import MapDirectionsControl from './map-directions-control';
+import MapRoute from '../components/map-route';
 
-function Map() {
-  const { accessToken, viewport, setViewport, crimeData } = useStore(
-    (it) => it.mapStore
+import DegreeLabel, {
+  circleColors,
+  circleLabelColors,
+} from '../components/degree-label';
+
+const GeocoderWrapper = observer(({ mapRef, containerRef }) => {
+  const { accessToken, setViewport } = useStore((it) => it.mapStore);
+
+  if (!mapRef.current) {
+    return <></>;
+  }
+
+  return (
+    <Geocoder
+      mapRef={mapRef}
+      containerRef={containerRef}
+      onViewportChange={setViewport}
+      mapboxApiAccessToken={accessToken}
+      position="top-left"
+    />
   );
-  const { mode } = useStore();
+});
 
-  const trackUserLocation = false;
-  const auto = false;
+function Map({ children }) {
+  const theme = useTheme();
+  const {
+    accessToken,
+    viewport,
+    setViewport,
+    crimeCircles,
+    currentPlan,
+    otherPlan,
+    isOtherPlanValid,
+    crimePopups,
+    showPopup,
+    closePopup,
+    setUserCoords,
+  } = useStore((it) => it.mapStore);
+  const { mode, flickerSwitch } = useStore();
+
+  const trackUserLocation = true;
+  const auto = true;
 
   const mapRef = useRef();
-  const [circles, setCircles] = useState([{}, {}, {}]);
-  const [flick, setFlick] = useState(1);
-
-  useEffect(() => {
-    const allFeatures =
-      crimeData?.map(({ coordinates, category, id, degree }) => ({
-        type: 'Feature',
-        geometry: { type: 'Point', coordinates: [...coordinates] },
-        properties: { category, id, degree },
-      })) ?? [];
-    const newCircles = [1, 2, 3]
-      .map((degree) =>
-        allFeatures.filter(({ properties }) => properties.degree === degree)
-      )
-      .map((features, i) =>
-        turf.buffer({ type: 'FeatureCollection', features }, 0.25, {
-          units: 'kilometers',
-        })
-      );
-    setCircles(newCircles);
-  }, [crimeData]);
-
-  useEffect(() => {
-    const id = setInterval(() => {
-      setFlick((prev) => (prev === 1 ? 0 : 1));
-    }, 1000);
-    return () => {
-      clearInterval(id);
-    };
-  }, []);
+  const geocoderContainerRef = useRef();
 
   return (
     <div
       style={{
         position: 'absolute',
         width: '100vw',
-        height: '90vh',
+        height: '100vh',
         zIndex: -10,
       }}
     >
+      <div
+        ref={geocoderContainerRef}
+        style={{
+          position: 'absolute',
+          top: 10,
+          left: 10,
+          width: '50%',
+        }}
+      />
       <MapGL
         ref={mapRef}
         {...viewport}
@@ -71,36 +90,108 @@ function Map() {
         onViewportChange={setViewport}
         style={{ position: 'absolute', bottom: 0, zIndex: -5 }}
         onClick={(e) => {
+          const clickedCrimeList = e.features.filter(
+            (it) => it.layer.source === 'crime-data-source'
+          );
+          if (clickedCrimeList.length) {
+            showPopup(clickedCrimeList[0].properties.id);
+          }
           console.log(e.features);
         }}
       >
-        {circles.map((it, i) => (
-          <Source
-            key={`crime-data-source-${i + 1}`}
-            id={`crime-data-source-${i + 1}`}
-            type="geojson"
-            data={it}
-          >
+        <Source id="crime-data-source" type="geojson" data={crimeCircles}>
+          {[1, 2, 3].map((degree) => (
             <Layer
-              id={`crime-data-layer-${i + 1}`}
+              key={`crime-data-layer-${degree}`}
+              id={`crime-data-layer-${degree}`}
               type="fill"
-              paint={{
-                'fill-opacity': flick === 1 ? 0.15 + 0.2 * (i + 1) : 0.15,
-                'fill-color': `#f${i * 4}3b20`,
-              }}
+              paint={{ 'fill-color': circleColors[degree][flickerSwitch] }}
+              filter={['==', 'degree', degree]}
             />
-          </Source>
+          ))}
+          {viewport.zoom > 12 &&
+            [1, 2, 3].map((degree) => (
+              <Layer
+                key={`crime-data-layer-${degree}-label`}
+                id={`crime-data-layer-${degree}-label`}
+                type="symbol"
+                layout={{
+                  'text-field': `${degree}`,
+                  'text-size': 36,
+                  'text-font': ['Roboto Bold'],
+                  'text-ignore-placement': true,
+                }}
+                paint={{
+                  'text-color': circleLabelColors[degree][flickerSwitch],
+                  'text-halo-blur': 5,
+                  'text-halo-color': circleColors[degree][flickerSwitch],
+                  'text-halo-width': 2,
+                }}
+                filter={['==', 'degree', degree]}
+              />
+            ))}
+        </Source>
+        {crimePopups.map((crime) => (
+          <Popup
+            key={`crime-popup-${crime.id}`}
+            longitude={crime.coordinates[0]}
+            latitude={crime.coordinates[1]}
+            closeButton={false}
+            closeOnClick={true}
+            onClose={() => closePopup(crime.id)}
+          >
+            <div style={{ textAlign: 'left' }}>
+              <Typography variant="h6">
+                {crime.category}
+                <DegreeLabel
+                  degree={crime.degree}
+                  flickerSwitch={flickerSwitch}
+                />
+              </Typography>
+              <Typography variant="body2">{crime.description}</Typography>
+            </div>
+          </Popup>
         ))}
-
-        {mode === 'plan' && <MapDirectionsControl />}
-        <NavigationControl style={{ right: 10, top: 10 }} />
-        {false && (
-          <GeolocateControl
-            style={{ left: 10, top: 80 }}
-            trackUserLocation={trackUserLocation}
-            auto={auto}
+        {currentPlan && (
+          <MapRoute
+            name="current-plan"
+            geojson={currentPlan.geojson}
+            lineColor={theme.palette.primary.main}
           />
         )}
+        {otherPlan && (
+          <MapRoute
+            name="other-plan"
+            geojson={otherPlan.geojson}
+            lineColor={theme.palette.secondary.main}
+            lineOpacity={isOtherPlanValid ? 1 : 0.5}
+          />
+        )}
+        {mode === 'plan' ? (
+          <MapDirectionsControl />
+        ) : (
+          <GeocoderWrapper
+            mapRef={mapRef}
+            containerRef={geocoderContainerRef}
+          />
+        )}
+        <NavigationControl style={{ right: 10, top: 100 }} />
+        <GeolocateControl
+          style={{ right: 10, top: 200 }}
+          trackUserLocation={
+            trackUserLocation &&
+            ['login', 'plan', 'list-request'].findIndex((it) => it === mode) ===
+              -1
+          }
+          auto={auto}
+          showAccuracyCircle={false}
+          positionOptions={{ enableHighAccuracy: true, timeout: 6000 }}
+          onGeolocate={(data) => {
+            console.log(data);
+            setUserCoords(data.coords);
+          }}
+        />
+        {children}
       </MapGL>
     </div>
   );

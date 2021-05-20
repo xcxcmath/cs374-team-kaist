@@ -2,18 +2,21 @@ import './App.css';
 import React from 'react';
 import { observer } from 'mobx-react';
 
-import TopBar from './top-bar';
-import AncherMenu from './ancher-menu';
+import Radar from './radar';
 import BottomPlanList from './bottom-plan-list';
 import Map from './map';
+import ScreenBorder from './screen-border';
+import BottomButtonList from './bottom-button-list';
 
 function App() {
   return (
     <div className="App">
-      <TopBar />
-      <AncherMenu />
-      <BottomPlanList />
-      <Map />
+      <ScreenBorder />
+      <Map>
+        <Radar />
+        <BottomPlanList />
+      </Map>
+      <BottomButtonList />
     </div>
   );
 }

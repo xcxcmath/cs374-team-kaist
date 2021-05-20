@@ -1,13 +1,14 @@
-import React from "react";
-import ReactDOM from "react-dom";
-import "mapbox-gl/dist/mapbox-gl.css";
-import "./index.css";
-import "@fontsource/roboto";
-import App from "./layout/App";
+import React from 'react';
+import ReactDOM from 'react-dom';
+import 'mapbox-gl/dist/mapbox-gl.css';
+import 'react-map-gl-geocoder/dist/mapbox-gl-geocoder.css';
+import './index.css';
+import '@fontsource/roboto';
+import App from './layout/App';
 
 ReactDOM.render(
   <React.StrictMode>
     <App />
   </React.StrictMode>,
-  document.getElementById("root")
+  document.getElementById('root')
 );

@@ -86,7 +86,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default observer(function TopBar() {
-  const { setAncherMenuOpen, setMode } = useStore((it) => it);
+  const { setAncherMenuOpen } = useStore((it) => it);
 
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);

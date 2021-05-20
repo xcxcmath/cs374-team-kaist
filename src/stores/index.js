@@ -29,6 +29,7 @@ class RootStore {
     makeAutoObservable(this);
     this.setMode = this.setMode.bind(this);
     this.setAncherMenuOpen = this.setAncherMenuOpen.bind(this);
+    this.setNotifications = this.setNotifications.bind(this);
 
     this.mapStore = new MapStore(viewport);
 
@@ -42,7 +43,9 @@ class RootStore {
   setMode(mode) {
     this.mode = mode;
   }
-
+  setNotifications(notifications) {
+    this.notifications = notifications;
+  }
   setAncherMenuOpen(open) {
     this.ancherMenuOpen = open;
   }

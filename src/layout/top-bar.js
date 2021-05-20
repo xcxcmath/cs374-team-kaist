@@ -20,7 +20,6 @@ import MoreIcon from '@material-ui/icons/MoreVert';
 import { action } from 'mobx';
 import { observer } from 'mobx-react';
 import useStore from '../hooks/use-store';
-
 const useStyles = makeStyles((theme) => ({
   grow: {
     flexGrow: 1,
@@ -84,9 +83,9 @@ const useStyles = makeStyles((theme) => ({
     },
   },
 }));
-
 export default observer(function TopBar() {
-  const { setAncherMenuOpen } = useStore((it) => it);
+  const { notifications, setNotifications } = useStore();
+  const { setAncherMenuOpen, setMode } = useStore((it) => it);
 
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -127,7 +126,8 @@ export default observer(function TopBar() {
       <MenuItem onClick={handleMenuClose}>My account</MenuItem>
     </Menu>
   );
-
+  if (notifications !== 'main') {
+  }
   const mobileMenuId = 'primary-search-account-menu-mobile';
   const renderMobileMenu = (
     <Menu
@@ -147,9 +147,9 @@ export default observer(function TopBar() {
         </IconButton>
         <p>Messages</p>
       </MenuItem>
-      <MenuItem>
-        <IconButton aria-label="show 11 new notifications" color="inherit">
-          <Badge badgeContent={11} color="secondary">
+      <MenuItem onClick={() => setNotifications('open')}>
+        <IconButton aria-label="show 15 new notifications" color="inherit">
+          <Badge badgeContent={15} color="secondary">
             <NotificationsIcon />
           </Badge>
         </IconButton>
@@ -206,7 +206,13 @@ export default observer(function TopBar() {
                 <MailIcon />
               </Badge>
             </IconButton>
-            <IconButton aria-label="show 17 new notifications" color="inherit">
+            <IconButton
+              aria-label="show 17 new notifications"
+              color="inherit"
+              onClick={() => {
+                setNotifications('open');
+              }}
+            >
               <Badge badgeContent={17} color="secondary">
                 <NotificationsIcon />
               </Badge>

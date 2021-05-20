@@ -10,13 +10,13 @@ export default observer(function BottomPlanList() {
   const { mode, setMode } = useStore();
 
   if (mode === 'plan') {
+      return <></>
   }
 
   if (mode !== 'main') {
-    return <></>;
   }
 
-  return (
+    return (
     <div
       className="plan-list"
       style={{

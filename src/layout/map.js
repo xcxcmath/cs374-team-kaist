@@ -10,11 +10,12 @@ import * as turf from '@turf/turf/dist/js';
 import useStore from '../hooks/use-store';
 
 import MapDirectionsControl from './map-directions-control';
-
+import Notification from './notification';
 function Map() {
   const { accessToken, viewport, setViewport, crimeData } = useStore(
     (it) => it.mapStore
   );
+  const { notifications } = useStore();
   const { mode } = useStore();
 
   const trackUserLocation = false;
@@ -93,6 +94,10 @@ function Map() {
         ))}
 
         {mode === 'plan' && <MapDirectionsControl />}
+        
+        {notifications == 'open' && <Notification/>}
+
+        
         <NavigationControl style={{ right: 10, top: 10 }} />
         {false && (
           <GeolocateControl

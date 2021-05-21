@@ -35,6 +35,8 @@ export default class MapStore {
   crimePopups = [];
   crimeNear = [];
   userCoords = null;
+  showCircle = true;
+  showRadar = false;
   radarRadius = 1;
 
   constructor(viewport) {
@@ -47,8 +49,12 @@ export default class MapStore {
     this.closePopup = this.closePopup.bind(this);
     this.addNear = this.addNear.bind(this);
     this.removeNear = this.removeNear.bind(this);
+    this.clearNear = this.clearNear.bind(this);
     this.setUserCoords = this.setUserCoords.bind(this);
+    this.setShowCircle = this.setShowCircle.bind(this);
+    this.setShowRadar = this.setShowRadar.bind(this);
     this.setRadarRadius = this.setRadarRadius.bind(this);
+    this.injectMapSettings = this.injectMapSettings.bind(this);
 
     this.viewport = viewport;
     this.updateCrimeCircles();
@@ -121,11 +127,37 @@ export default class MapStore {
     this.crimeNear = this.crimeNear.filter((it) => it !== id);
   }
 
+  clearNear() {
+    this.crimeNear = [];
+  }
+
   setUserCoords(coords) {
     this.userCoords = coords;
   }
 
+  setShowCircle(show) {
+    this.showCircle = show;
+  }
+
+  setShowRadar(show) {
+    this.showRadar = show;
+  }
+
   setRadarRadius(radius) {
     this.radarRadius = radius;
+  }
+
+  injectMapSettings(settings) {
+    const keys = Object.keys(settings);
+    if (keys.includes('radar') && typeof settings.radar === 'boolean') {
+      this.showRadar = settings.radar;
+    }
+
+    if (keys.includes('circle') && typeof settings.circle === 'boolean') {
+      this.showCircle = settings.circle;
+    }
+    if (keys.includes('radius') && typeof settings.radius === 'number') {
+      this.radarRadius = settings.radius;
+    }
   }
 }

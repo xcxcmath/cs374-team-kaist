@@ -9,6 +9,7 @@ import ScreenBorder from './screen-border';
 import BottomButtonList from './bottom-button-list';
 import UpdateProfile from './updateProfile';
 import Login from './login';
+import SettingPanel from './setting-panel';
 
 import useStore from '../hooks/use-store';
 
@@ -25,6 +26,7 @@ function App() {
           disableGoBack={mode === 'login-profile'}
         />
       )}
+      <SettingPanel />
       <Map>
         <Radar />
         <BottomPlanList />

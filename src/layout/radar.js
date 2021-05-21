@@ -7,9 +7,15 @@ import { Source, Layer } from 'react-map-gl';
 import * as turf from '@turf/turf/dist/js';
 
 export default observer(function Radar() {
-  const { crimeData, radarRadius, userCoords, addNear, removeNear } = useStore(
-    (it) => it.mapStore
-  );
+  const {
+    crimeData,
+    radarRadius,
+    userCoords,
+    addNear,
+    removeNear,
+    showRadar,
+    clearNear,
+  } = useStore((it) => it.mapStore);
   const invalidRadius = typeof radarRadius !== 'number';
 
   const [theta, setTheta] = useState(0);
@@ -23,7 +29,7 @@ export default observer(function Radar() {
   }, []);
 
   const radar = useMemo(() => {
-    if (!userCoords || invalidRadius) return null;
+    if (!userCoords || invalidRadius || !showRadar) return null;
 
     const centerCoords = [userCoords.longitude, userCoords.latitude];
     const center = turf.point(centerCoords, { for: 'line' });
@@ -37,10 +43,10 @@ export default observer(function Radar() {
     ];
     const ret = turf.featureCollection([buffer, arc]);
     return ret;
-  }, [userCoords, radarRadius, invalidRadius, theta]);
+  }, [userCoords, radarRadius, invalidRadius, theta, showRadar]);
 
   useEffect(() => {
-    if (crimeData && userCoords && !invalidRadius) {
+    if (crimeData && userCoords && !invalidRadius && showRadar) {
       const here = turf.point([userCoords.longitude, userCoords.latitude]);
       const isInside = (coords) =>
         turf.distance(turf.point(coords), here) < radarRadius + 0.25;
@@ -51,10 +57,12 @@ export default observer(function Radar() {
           removeNear(id);
         }
       });
+    } else {
+      clearNear();
     }
-  }, [crimeData, userCoords, radarRadius, invalidRadius, addNear, removeNear]);
+  }, [crimeData, userCoords, radarRadius, invalidRadius, addNear, removeNear, showRadar, clearNear]);
 
-  if (!userCoords || invalidRadius) {
+  if (!userCoords || invalidRadius || !showRadar) {
     return <></>;
   }
 

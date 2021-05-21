@@ -8,11 +8,13 @@ import {
   CircularProgress,
 } from '@material-ui/core';
 
+import { initialUserData } from '../stores';
 import useStore from '../hooks/use-store';
 import { database } from '../stores/firebase';
 
 export default observer(function Login() {
   const { mode, setMode, setUserID } = useStore();
+  const { injectMapSettings } = useStore((it) => it.mapStore);
   const [loading, setLoading] = useState(false);
   const ref = useMemo(() => database.ref('users'), []);
 
@@ -77,25 +79,14 @@ export default observer(function Login() {
               const userData = (await ref.child(id).get()).val();
               if (userData) {
                 setUserID(id);
+                injectMapSettings(userData.setting);
                 setLoading(false);
                 setMode('main');
               } else {
-                await ref.child(id).set({
-                  name: '',
-                  age: 19,
-                  gender: 'other',
-                  country: 'KR',
-                  bio: '',
-                  phone: '',
-                  kakao: '',
-                  setting: {
-                    circle: true,
-                    radar: false,
-                    radius: 1,
-                  },
-                });
+                await ref.child(id).set(initialUserData);
 
                 setUserID(id);
+                injectMapSettings(userData.setting);
                 setLoading(false);
                 setMode('login-profile');
               }

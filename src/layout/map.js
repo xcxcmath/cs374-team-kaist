@@ -54,6 +54,7 @@ function Map({ children }) {
     showPopup,
     closePopup,
     setUserCoords,
+    showCircle,
   } = useStore((it) => it.mapStore);
   const { mode, flickerSwitch } = useStore();
   const [currentPlan, ,] = useUserDatabase(userID, 'path', (text) => {
@@ -115,6 +116,7 @@ function Map({ children }) {
               type="fill"
               paint={{ 'fill-color': circleColors[degree][flickerSwitch] }}
               filter={['==', 'degree', degree]}
+              layout={{ visibility: showCircle ? 'visible' : 'none' }}
             />
           ))}
           {viewport.zoom > 12 &&
@@ -128,6 +130,7 @@ function Map({ children }) {
                   'text-size': 36,
                   'text-font': ['Roboto Bold'],
                   'text-ignore-placement': true,
+                  visibility: showCircle ? 'visible' : 'none',
                 }}
                 paint={{
                   'text-color': circleLabelColors[degree][flickerSwitch],

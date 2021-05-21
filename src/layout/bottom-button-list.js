@@ -8,7 +8,7 @@ import { observer } from 'mobx-react';
 import useStore from '../hooks/use-store';
 
 export default observer(function BottomButtonList() {
-  const { setMode } = useStore();
+  const { setMode, setOpenSettingPanel } = useStore();
 
   return (
     <div
@@ -23,7 +23,7 @@ export default observer(function BottomButtonList() {
       <Fab size="small" onClick={() => setMode('profile')}>
         <AccountCircleIcon />
       </Fab>
-      <Fab size="small">
+      <Fab size="small" onClick={() => setOpenSettingPanel(true)}>
         <TuneIcon />
       </Fab>
     </div>

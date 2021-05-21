@@ -5,6 +5,7 @@ import { decode } from '@mapbox/polyline';
 import { action } from 'mobx';
 import { observer } from 'mobx-react';
 import useStore from '../hooks/use-store';
+import { useUserDatabase } from '../hooks/use-database';
 
 import MapDirectionsStore from '../stores/map-directions-store';
 import { isEqual, throttle } from 'lodash';
@@ -79,10 +80,11 @@ const Inputs = observer(() => {
   const mds = useContext(MapDirectionsStore);
   const context = useContext(MapContext);
   const { viewport } = context;
-  const { setMode, flickerSwitch } = useStore();
-  const { accessToken, crimeData, setCurrentPlan, userCoords } = useStore(
-    (it) => it.mapStore
-  );
+  const { setMode, flickerSwitch, userID } = useStore();
+  const { accessToken, crimeData, userCoords } = useStore((it) => it.mapStore);
+
+  const [, setPlan] = useUserDatabase(userID, 'path');
+
   const circles = useRef([{}, {}, {}]);
   const [originValue, setOriginValue] = useState(null);
   const [originInputValue, setOriginInputValue] = useState('');
@@ -498,7 +500,7 @@ const Inputs = observer(() => {
                   variant="contained"
                   color="primary"
                   onClick={action(() => {
-                    setCurrentPlan(routeToAdd);
+                    setPlan(JSON.stringify(routeToAdd));
                     setMode('main');
                   })}
                 >

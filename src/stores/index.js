@@ -19,18 +19,15 @@ import MapStore from './map-store';
 
 class RootStore {
   mapStore = null;
-  firebaseStore = null;
 
   flickerSwitch = true;
-  mode = 'main';
-  ancherMenuOpen = false;
+  mode = process.env.REACT_APP_PRELOGIN ? 'main' : 'login';
+  userID = process.env.REACT_APP_PRELOGIN ?? 'admin';
 
   constructor({ viewport }) {
     makeAutoObservable(this);
     this.setMode = this.setMode.bind(this);
-    this.setAncherMenuOpen = this.setAncherMenuOpen.bind(this);
-    this.setNotifications = this.setNotifications.bind(this);
-
+    this.setUserID = this.setUserID.bind(this);
     this.mapStore = new MapStore(viewport);
 
     setInterval(() => this.toggleFlickerSwitch(), 1000);
@@ -43,11 +40,9 @@ class RootStore {
   setMode(mode) {
     this.mode = mode;
   }
-  setNotifications(notifications) {
-    this.notifications = notifications;
-  }
-  setAncherMenuOpen(open) {
-    this.ancherMenuOpen = open;
+
+  setUserID(id) {
+    this.userID = id;
   }
 }
 

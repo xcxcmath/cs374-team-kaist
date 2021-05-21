@@ -8,7 +8,7 @@ import { observer } from 'mobx-react';
 import useStore from '../hooks/use-store';
 
 export default observer(function BottomButtonList() {
-  const { mode, setMode } = useStore();
+  const { setMode } = useStore();
 
   return (
     <div
@@ -20,7 +20,7 @@ export default observer(function BottomButtonList() {
         flexDirection: 'column',
       }}
     >
-      <Fab size="small">
+      <Fab size="small" onClick={() => setMode('profile')}>
         <AccountCircleIcon />
       </Fab>
       <Fab size="small">

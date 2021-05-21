@@ -1,6 +1,5 @@
-import React, { useContext } from 'react';
+import React, { useContext, useMemo } from 'react';
 import { MapContext } from 'react-map-gl';
-import Fab from '@material-ui/core/Fab';
 
 import {
   Slide,
@@ -11,6 +10,8 @@ import {
   Icon,
   IconButton,
   Button,
+  Fab,
+  ButtonBase,
 } from '@material-ui/core';
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
 import DirectionsIcon from '@material-ui/icons/Directions';
@@ -23,6 +24,7 @@ import extent from 'turf-extent';
 import { action } from 'mobx';
 import { observer } from 'mobx-react';
 import useStore from '../hooks/use-store';
+import { useUserDatabase } from '../hooks/use-database';
 import MapDirectionsStore from '../stores/map-directions-store';
 import DegreeLabel from '../components/degree-label';
 import utils from '../utils/directions';
@@ -31,8 +33,19 @@ export default observer(function BottomPlanList() {
   const context = useContext(MapContext);
   const { viewport } = context;
   const theme = useTheme();
-  const { mode, setMode, flickerSwitch } = useStore();
-  const { currentPlan, setCurrentPlan } = useStore((it) => it.mapStore);
+  const { mode, setMode, flickerSwitch, userID } = useStore();
+  const [currentPlan, setCurrentPlanText] = useUserDatabase(
+    userID,
+    'path',
+    (text) => {
+      try {
+        return JSON.parse(text);
+      } catch {
+        return null;
+      }
+    }
+  );
+
   const mds = useContext(MapDirectionsStore);
 
   if (mode === 'plan') {
@@ -92,31 +105,10 @@ export default observer(function BottomPlanList() {
           display: 'flex',
           justifyContent: 'flex-start',
           alignItems: 'center',
+          width: '90vmin',
         }}
       >
-        <Card
-          style={{
-            width: '90vmin',
-          }}
-          onClick={() => {
-            const bb = extent(currentPlan.geojson);
-            utils.flyToViewport(
-              context,
-              {},
-              {
-                ...viewport.fitBounds(
-                  [
-                    [bb[0], bb[1]],
-                    [bb[2], bb[3]],
-                  ],
-                  {
-                    padding: mds.routePadding,
-                  }
-                ),
-              }
-            );
-          }}
-        >
+        <Card style={{ width: '100%' }}>
           <CardContent>
             <Typography
               variant="h6"
@@ -126,18 +118,52 @@ export default observer(function BottomPlanList() {
             >
               Your current plan
             </Typography>
-            <div
+            <ButtonBase
               style={{
+                border: '1px solid',
+                borderColor: theme.palette.primary.main,
+                borderRadius: 5,
+                padding: '6px 12px',
+                boxShadow: '0 0 0 0.2rem ' + theme.palette.primary.main,
                 display: 'flex',
                 flexWrap: 'wrap',
                 justifyContent: 'space-between',
                 alignItems: 'center',
+                width: '100%',
+              }}
+              onClick={() => {
+                const bb = extent(currentPlan.geojson);
+                utils.flyToViewport(
+                  context,
+                  {},
+                  {
+                    ...viewport.fitBounds(
+                      [
+                        [bb[0], bb[1]],
+                        [bb[2], bb[3]],
+                      ],
+                      {
+                        padding: mds.routePadding,
+                      }
+                    ),
+                  }
+                );
               }}
             >
-              <span style={{ display: 'flex', alignItems: 'center' }}>
+              <span
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  textOverflow: 'ellipsis',
+                  textAlign: 'start',
+                }}
+              >
                 <Icon size="small">
                   <img
-                    style={{ backgroundColor: '#3bb2d0', borderRadius: '50%' }}
+                    style={{
+                      backgroundColor: '#3bb2d0',
+                      borderRadius: '50%',
+                    }}
                     src="icons/depart.svg"
                     alt=""
                   />
@@ -147,19 +173,29 @@ export default observer(function BottomPlanList() {
                 </Typography>
               </span>
               <ArrowForwardIcon />
-              <span style={{ display: 'flex', alignItems: 'center' }}>
-                <Typography variant="h6" style={{ fontWeight: 'bold' }}>
+              <span
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  textOverflow: 'ellipsis',
+                  textAlign: 'end',
+                }}
+              >
+                <Typography noWrap variant="h6" style={{ fontWeight: 'bold' }}>
                   {destinationMain}
                 </Typography>{' '}
                 <Icon size="small">
                   <img
-                    style={{ backgroundColor: '#8a8bc9', borderRadius: '50%' }}
+                    style={{
+                      backgroundColor: '#8a8bc9',
+                      borderRadius: '50%',
+                    }}
                     src="icons/arrive.svg"
                     alt=""
                   />
                 </Icon>
               </span>
-            </div>
+            </ButtonBase>
             <div
               style={{
                 display: 'flex',
@@ -221,7 +257,7 @@ export default observer(function BottomPlanList() {
               color="secondary"
               onClick={(e) => {
                 e.stopPropagation();
-                setCurrentPlan(null);
+                setCurrentPlanText(null);
               }}
             >
               <DeleteIcon />

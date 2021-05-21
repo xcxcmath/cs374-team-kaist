@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useMemo } from 'react';
 import { observer } from 'mobx-react';
 import MapGL, {
   NavigationControl,
@@ -9,6 +9,7 @@ import MapGL, {
 } from 'react-map-gl';
 import Geocoder from 'react-map-gl-geocoder';
 import useStore from '../hooks/use-store';
+import { useUserDatabase } from '../hooks/use-database';
 
 import { Typography } from '@material-ui/core';
 import { useTheme } from '@material-ui/core/styles';
@@ -41,12 +42,12 @@ const GeocoderWrapper = observer(({ mapRef, containerRef }) => {
 
 function Map({ children }) {
   const theme = useTheme();
+  const { userID } = useStore();
   const {
     accessToken,
     viewport,
     setViewport,
     crimeCircles,
-    currentPlan,
     otherPlan,
     isOtherPlanValid,
     crimePopups,
@@ -55,6 +56,13 @@ function Map({ children }) {
     setUserCoords,
   } = useStore((it) => it.mapStore);
   const { mode, flickerSwitch } = useStore();
+  const [currentPlan, ,] = useUserDatabase(userID, 'path', (text) => {
+    try {
+      return JSON.parse(text);
+    } catch {
+      return null;
+    }
+  });
 
   const trackUserLocation = true;
   const auto = true;
@@ -179,9 +187,9 @@ function Map({ children }) {
         <GeolocateControl
           style={{ right: 10, top: 200 }}
           trackUserLocation={
-            trackUserLocation &&
-            ['login', 'plan', 'list-request'].findIndex((it) => it === mode) ===
-              -1
+            trackUserLocation && true
+            //['login', 'plan', 'list-request'].findIndex((it) => it === mode) ===
+            //-1
           }
           auto={auto}
           showAccuracyCircle={false}

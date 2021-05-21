@@ -28,7 +28,6 @@ const crimeData = [
 export default class MapStore {
   viewport = null;
   accessToken = process.env.REACT_APP_MAPBOX_KEY;
-  currentPlan = null;
   otherPlan = null;
   isOtherPlanValid = false;
   crimeData = crimeData;
@@ -41,7 +40,6 @@ export default class MapStore {
   constructor(viewport) {
     makeAutoObservable(this);
     this.setViewport = this.setViewport.bind(this);
-    this.setCurrentPlan = this.setCurrentPlan.bind(this);
     this.setOtherPlan = this.setOtherPlan.bind(this);
     this.setIsOtherPlanValid = this.setIsOtherPlanValid.bind(this);
     this.setCrimeData = this.setCrimeData.bind(this);
@@ -82,10 +80,6 @@ export default class MapStore {
 
   setViewport(viewport) {
     this.viewport = viewport;
-  }
-
-  setCurrentPlan(plan) {
-    this.currentPlan = plan;
   }
 
   setOtherPlan(plan) {

@@ -84,7 +84,7 @@ function Map({ children }) {
         ref={geocoderContainerRef}
         style={{
           position: 'absolute',
-          top: 10,
+          top: 5,
           left: 10,
           width: '50%',
         }}

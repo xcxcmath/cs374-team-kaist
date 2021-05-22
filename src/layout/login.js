@@ -86,7 +86,7 @@ export default observer(function Login() {
                 await ref.child(id).set(initialUserData);
 
                 setUserID(id);
-                injectMapSettings(userData.setting);
+                injectMapSettings(initialUserData.setting);
                 setLoading(false);
                 setMode('login-profile');
               }

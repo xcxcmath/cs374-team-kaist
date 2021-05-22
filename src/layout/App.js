@@ -10,6 +10,7 @@ import BottomButtonList from './bottom-button-list';
 import UpdateProfile from './updateProfile';
 import Login from './login';
 import SettingPanel from './setting-panel';
+import CompanionPanel from './companion-panel';
 
 import useStore from '../hooks/use-store';
 
@@ -27,6 +28,7 @@ function App() {
         />
       )}
       <SettingPanel />
+      <CompanionPanel />
       <Map>
         <Radar />
         <BottomPlanList />

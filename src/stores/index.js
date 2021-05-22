@@ -11,6 +11,7 @@ import { database } from './firebase';
  * profile, login-profile
  * main
  * plan
+ *
  * list-request
  * see-request
  * post-request
@@ -40,12 +41,14 @@ class RootStore {
   mode = process.env.REACT_APP_PRELOGIN ? 'main' : 'login';
   userID = process.env.REACT_APP_PRELOGIN ?? 'admin';
   openSettingPanel = false;
+  openCompanionPanel = false;
 
   constructor({ viewport }) {
     makeAutoObservable(this);
     this.setMode = this.setMode.bind(this);
     this.setUserID = this.setUserID.bind(this);
     this.setOpenSettingPanel = this.setOpenSettingPanel.bind(this);
+    this.setOpenCompanionPanel = this.setOpenCompanionPanel.bind(this);
     this.mapStore = new MapStore(viewport);
 
     setInterval(() => this.toggleFlickerSwitch(), 1000);
@@ -83,6 +86,10 @@ class RootStore {
 
   setOpenSettingPanel(open) {
     this.openSettingPanel = open;
+  }
+
+  setOpenCompanionPanel(open) {
+    this.openCompanionPanel = open;
   }
 }
 

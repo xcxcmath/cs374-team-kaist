@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
-import Fab from '@material-ui/core/Fab';
+import { Fab, Button, IconButton, Typography } from '@material-ui/core';
 import TimerIcon from '@material-ui/icons/Timer';
 import CloseIcon from '@material-ui/icons/Close';
 
@@ -16,18 +16,20 @@ import CloseIcon from '@material-ui/icons/Close';
 // />
 // backgroundColor: '#FBEEEE'
 export default function SwipeCard(props) {
-  var [dots, setDots] = useState('.');
+  const [dots, setDots] = useState(1);
+  const dotString = '.'.repeat(dots);
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      setDots((prev) => (prev % 3) + 1);
+    }, 1100);
+    return () => {
+      clearInterval(id);
+    };
+  }, []);
+
   var timeLeft;
   if (props.empty === true && props.waiting === true) {
-    setTimeout(function () {
-      if (dots === '.') {
-        setDots('..');
-      } else if (dots === '..') {
-        setDots('...');
-      } else if (dots === '...') {
-        setDots('.');
-      }
-    }, 1100);
     return (
       <div>
         <div
@@ -36,10 +38,6 @@ export default function SwipeCard(props) {
             flexDirection: 'row',
             backgroundColor: 'white',
             width: '85%',
-            height: '100px',
-            position: 'fixed',
-            top: '60px',
-            marginLeft: '5px',
           }}
         >
           <div
@@ -57,72 +55,30 @@ export default function SwipeCard(props) {
                 fontFamily: 'roboto, sans-serif',
               }}
             >
-              Waiting for responses{dots}
+              Waiting for responses{dotString}
             </div>
           </div>
-        </div>
-        <div
-          style={{
-            position: 'fixed',
-            top: '163px',
-            width: '30px',
-            left: '42.5%',
-            marginLeft: '-15px',
-          }}
-        >
-          <Fab color="default" size="small">
-            <CloseIcon />
-          </Fab>
         </div>
       </div>
     );
   } else if (props.empty === true) {
     return (
       <div>
+        <Typography variant="body1">
+          No companions available.
+          <br />
+          Do you want to create new request?
+        </Typography>
+
         <div
           style={{
             display: 'flex',
-            flexDirection: 'column',
-            backgroundColor: 'white',
-            width: '85%',
-            height: '100px',
-            position: 'fixed',
-            top: '60px',
-            marginLeft: '5px',
+            justifyContent: 'space-evenly',
           }}
         >
-          <div
-            style={{
-              marginLeft: '4%',
-              marginRight: '4%',
-              textAlign: 'center',
-              fontFamily: 'roboto, sans-serif',
-            }}
-          >
-            No companions available. Do you want to create new request?
-          </div>
-          <div
-            style={{
-              marginLeft: 'auto',
-              marginRight: 'auto',
-              marginTop: '10px',
-            }}
-          >
-            <div
-              style={{
-                marginRight: '25px',
-                display: 'inline',
-                fontFamily: 'roboto, sans-serif',
-              }}
-            >
-              Yes
-            </div>
-            <div
-              style={{ display: 'inline', fontFamily: 'roboto, sans-serif' }}
-            >
-              No
-            </div>
-          </div>
+          <Button variant="outlined" color="primary" onClick={props.onYes}>
+            Yes
+          </Button>
         </div>
       </div>
     );
@@ -135,7 +91,6 @@ export default function SwipeCard(props) {
           backgroundColor: 'lightblue',
           height: '35px',
           textAlign: 'center',
-          marginLeft: '10px',
         }}
       >
         <div style={{ alignSelf: 'center', marginLeft: '1px' }}>
@@ -148,73 +103,67 @@ export default function SwipeCard(props) {
     );
   }
   return (
-    <div>
+    <div
+      style={{
+        display: 'flex',
+      }}
+    >
+      {props.onLeft && (
+        <IconButton onClick={props.onLeft}>
+          <ChevronLeftIcon color="action" />
+        </IconButton>
+      )}
+      <div style={{ display: 'flex', height: '100%', alignItems: 'center' }}>
+        <img src={props.image} style={{ maxHeight: '15vmin' }} alt="profile" />
+      </div>
       <div
         style={{
           display: 'flex',
-          backgroundColor: 'white',
-          width: '85%',
-          height: '100px',
-          position: 'fixed',
-          top: '60px',
-          marginLeft: '5px',
+          flexDirection: 'column',
+          marginLeft: '6px',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center' }}>
-          <ChevronLeftIcon color="action" />
-        </div>
-        <div style={{ display: 'flex', height: '100%', alignItems: 'center' }}>
-          <img src={props.image} style={{ height: '88%' }}></img>
+        <div
+          style={{
+            fontSize: '16px',
+            textAlign: 'left',
+          }}
+        >
+          {props.name} / {props.gender} / {props.age}
+          <br />
+          {props.show && <>{props.phone}</>}
+          {props.show && <>{props.kakao}</>}
         </div>
         <div
           style={{
-            display: 'flex',
-            flexDirection: 'column',
-            marginLeft: '6px',
+            textAlign: 'left',
           }}
         >
-          <div
-            style={{
-              fontFamily: 'roboto, sans-serif',
-              fontSize: '16px',
-              marginTop: '4px',
-              textAlign: 'left',
-            }}
-          >
-            {props.name} / {props.gender} / {props.age}
-          </div>
-          <div
-            style={{
-              fontFamily: 'roboto, sans-serif',
-              fontSize: '16px',
-              marginTop: '3px',
-              textAlign: 'left',
-            }}
-          >
-            {props.travelText}
-          </div>
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              marginTop: '8px',
-              fontFamily: 'roboto, sans-serif',
-            }}
-          >
-            <div style={{}}>
-              <Fab color="primary" variant="extended" size="small">
-                Go&nbsp;to&nbsp;Bio
-              </Fab>
-            </div>
-            {timeLeft}
-          </div>
+          {props.travelText}
         </div>
+
         <div
-          style={{ display: 'flex', alignItems: 'center', marginLeft: 'auto' }}
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+          }}
         >
-          <ChevronRightIcon color="action" />
+          <Fab
+            color="primary"
+            variant="extended"
+            size="small"
+            onClick={props.onBio}
+          >
+            Go&nbsp;to&nbsp;Bio
+          </Fab>
+          {timeLeft}
         </div>
       </div>
+      {props.onRight && (
+        <IconButton onClick={props.onRight}>
+          <ChevronRightIcon color="action" />
+        </IconButton>
+      )}
     </div>
   );
 }

@@ -1,5 +1,4 @@
-import React, { useState, useEffect, useContext, useMemo, useRef } from 'react';
-import { MapContext, _useMapControl as useMapControl } from 'react-map-gl';
+import React from 'react';
 
 import { observer } from 'mobx-react';
 import useStore from '../hooks/use-store';
@@ -7,23 +6,15 @@ import { useUserDatabase } from '../hooks/use-database';
 
 import {
   Grow,
-  Icon,
-  InputAdornment,
-  TextField,
-  CircularProgress,
-  Slider,
-  Typography,
-  Button,
-  Box,
   IconButton,
   Card,
   CardContent,
   FormGroup,
   FormControlLabel,
   Checkbox,
+  Slider,
 } from '@material-ui/core';
-import Autocomplete from '@material-ui/lab/Autocomplete';
-import { makeStyles, useTheme } from '@material-ui/core/styles';
+import { useTheme } from '@material-ui/core/styles';
 import CloseIcon from '@material-ui/icons/Close';
 
 export default observer(function SettingPanel() {
@@ -39,12 +30,8 @@ export default observer(function SettingPanel() {
   const [, , updateSetting] = useUserDatabase(userID, 'setting');
   const theme = useTheme();
 
-  if (!openSettingPanel) {
-    return <></>;
-  }
-
   return (
-    <Grow in={true}>
+    <Grow in={openSettingPanel} mountOnEnter unmountOnExit>
       <Card
         style={{
           position: 'absolute',

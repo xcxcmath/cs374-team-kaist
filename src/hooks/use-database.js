@@ -16,7 +16,10 @@ export default function useDatabase(entry) {
     };
   }, [ref, listener]);
 
-  return [value, ref.set.bind(ref), ref.update.bind(ref), loaded];
+  const setter = useCallback(ref.set.bind(ref), [ref]);
+  const updater = useCallback(ref.update.bind(ref), [ref]);
+
+  return [value, setter, updater, loaded];
 }
 
 export function useUserDatabase(userID, entry = '', f = (v) => v) {
@@ -25,6 +28,14 @@ export function useUserDatabase(userID, entry = '', f = (v) => v) {
   return [vv, s, u, l];
 }
 
-export function useRequestDatabase(userID) {
-  return useDatabase(`requests/${userID}`);
+export function useRequestDatabase(userID = null) {
+  const entryString =
+    userID && userID.length ? `requests/${userID}` : 'requests';
+  const dat = useDatabase(entryString);
+
+  if (!userID) {
+    return [null, null, null, null];
+  } else {
+    return dat;
+  }
 }

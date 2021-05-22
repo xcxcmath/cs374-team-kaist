@@ -24,7 +24,8 @@ import extent from 'turf-extent';
 import { action } from 'mobx';
 import { observer } from 'mobx-react';
 import useStore from '../hooks/use-store';
-import { useUserDatabase } from '../hooks/use-database';
+import { database } from '../stores/firebase';
+import { useRequestDatabase, useUserDatabase } from '../hooks/use-database';
 import MapDirectionsStore from '../stores/map-directions-store';
 import DegreeLabel from '../components/degree-label';
 import utils from '../utils/directions';
@@ -33,7 +34,8 @@ export default observer(function BottomPlanList() {
   const context = useContext(MapContext);
   const { viewport } = context;
   const theme = useTheme();
-  const { mode, setMode, flickerSwitch, userID } = useStore();
+  const { mode, setMode, flickerSwitch, userID, setOpenCompanionPanel } =
+    useStore();
   const [currentPlan, setCurrentPlanText] = useUserDatabase(
     userID,
     'path',
@@ -45,6 +47,8 @@ export default observer(function BottomPlanList() {
       }
     }
   );
+  const [companion, setCompanion] = useUserDatabase(userID, 'companion');
+  const [ownRequest, setOwnRequest] = useRequestDatabase(userID);
 
   const mds = useContext(MapDirectionsStore);
 
@@ -97,7 +101,8 @@ export default observer(function BottomPlanList() {
       style={{
         position: 'absolute',
         width: '100%',
-        bottom: 30,
+        bottom: 20,
+        zIndex: 2,
       }}
     >
       <div
@@ -105,7 +110,7 @@ export default observer(function BottomPlanList() {
           display: 'flex',
           justifyContent: 'flex-start',
           alignItems: 'center',
-          width: '90vmin',
+          maxWidth: '90vmin',
         }}
       >
         <Card style={{ width: '100%' }}>
@@ -247,17 +252,34 @@ export default observer(function BottomPlanList() {
               startIcon={<PeopleIcon />}
               onClick={(e) => {
                 e.stopPropagation();
+                setOpenCompanionPanel(true);
               }}
             >
-              Find Companion
+              {companion ? 'See' : 'Find'} Companion
             </Button>
             <IconButton
               style={{ marginLeft: 'auto' }}
               variant="outlined"
               color="secondary"
-              onClick={(e) => {
+              onClick={async (e) => {
                 e.stopPropagation();
                 setCurrentPlanText(null);
+                if (ownRequest) {
+                  setOwnRequest(null);
+                }
+                if (companion) {
+                  setCompanion(null);
+                  database
+                    .ref(`users/${companion}`)
+                    .update({ companion: null });
+                  const ref = database.ref(`requests/${companion}`);
+                  const data = await ref.get();
+                  if (data.exists()) {
+                    database
+                      .ref(`requests/${companion}`)
+                      .update({ status: null });
+                  }
+                }
               }}
             >
               <DeleteIcon />

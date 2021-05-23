@@ -13,12 +13,12 @@
 
 ### general
 
-- Message box for checking deletion
-- Snackbar to show what happened
+- (Done) Message box for checking deletion
+- (partially done) Snackbar to show what happened
 
 ### map
 
-- applying Jihun and Assel's works
+- applying Jihun and Assel's works (?)
 
 ### companion
 
@@ -70,6 +70,7 @@ users (ID: string) {
     gender: 'male' | 'female' | 'other'
     bio: string
     companion: string?
+    companionMessage: string? (for showing message, 'declined', 'accepted', 'pending', or null)
     setting: {radius: integer, circle: boolean, radar: boolean}
     phone: string
     kakao: string
@@ -84,9 +85,9 @@ requests (ID = User ID) {
     status: accepted | null (when A wait others' respond) | pending (when waiting for requester's approval)
 }
 
-Report (random ID) {
-    ID_snitch: string
-    ID_reported: string
-    report_text: string
+reports (target ID) {
+    (reporter ID) : {
+        string
+    }
 }
 ```

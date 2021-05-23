@@ -34,8 +34,14 @@ export default observer(function BottomPlanList() {
   const context = useContext(MapContext);
   const { viewport } = context;
   const theme = useTheme();
-  const { mode, setMode, flickerSwitch, userID, setOpenCompanionPanel } =
-    useStore();
+  const {
+    mode,
+    setMode,
+    flickerSwitch,
+    userID,
+    setOpenCompanionPanel,
+    setDialog,
+  } = useStore();
   const [currentPlan, setCurrentPlanText] = useUserDatabase(
     userID,
     'path',
@@ -101,7 +107,7 @@ export default observer(function BottomPlanList() {
       style={{
         position: 'absolute',
         width: '100%',
-        bottom: 20,
+        bottom: 10,
         zIndex: 2,
       }}
     >
@@ -114,21 +120,21 @@ export default observer(function BottomPlanList() {
         }}
       >
         <Card style={{ width: '100%' }}>
-          <CardContent>
+          <CardContent style={{ padding: '5px 10px' }}>
             <Typography
               variant="h6"
               gutterBottom
               style={{ fontSize: 14 }}
               color="textSecondary"
             >
-              Your current plan
+              Click below to focus
             </Typography>
             <ButtonBase
               style={{
                 border: '1px solid',
                 borderColor: theme.palette.primary.main,
                 borderRadius: 5,
-                padding: '6px 12px',
+                padding: '3px 8px',
                 boxShadow: '0 0 0 0.2rem ' + theme.palette.primary.main,
                 display: 'flex',
                 flexWrap: 'wrap',
@@ -173,7 +179,10 @@ export default observer(function BottomPlanList() {
                     alt=""
                   />
                 </Icon>
-                <Typography variant="h6" style={{ fontWeight: 'bold' }}>
+                <Typography
+                  variant="h6"
+                  style={{ fontSize: '1rem', fontWeight: 'bold' }}
+                >
                   {originMain}
                 </Typography>
               </span>
@@ -186,7 +195,11 @@ export default observer(function BottomPlanList() {
                   textAlign: 'end',
                 }}
               >
-                <Typography noWrap variant="h6" style={{ fontWeight: 'bold' }}>
+                <Typography
+                  noWrap
+                  variant="h6"
+                  style={{ fontSize: '1rem', fontWeight: 'bold' }}
+                >
                   {destinationMain}
                 </Typography>{' '}
                 <Icon size="small">
@@ -263,23 +276,36 @@ export default observer(function BottomPlanList() {
               color="secondary"
               onClick={async (e) => {
                 e.stopPropagation();
-                setCurrentPlanText(null);
+                let text = 'Do you want to delete current plan?';
                 if (ownRequest) {
-                  setOwnRequest(null);
+                  text += ' Your request will be canceled as well.';
+                } else if (companion) {
+                  text += ' Your response will be canceled as well.';
                 }
-                if (companion) {
-                  setCompanion(null);
-                  database
-                    .ref(`users/${companion}`)
-                    .update({ companion: null });
-                  const ref = database.ref(`requests/${companion}`);
-                  const data = await ref.get();
-                  if (data.exists()) {
-                    database
-                      .ref(`requests/${companion}`)
-                      .update({ status: null });
+                setDialog(
+                  'Deleting Your Plan',
+                  text,
+                  () => {},
+                  async () => {
+                    setCurrentPlanText(null);
+                    if (ownRequest) {
+                      setOwnRequest(null);
+                    }
+                    if (companion) {
+                      setCompanion(null);
+                      database
+                        .ref(`users/${companion}`)
+                        .update({ companion: null });
+                      const ref = database.ref(`requests/${companion}`);
+                      const data = await ref.get();
+                      if (data.exists()) {
+                        database
+                          .ref(`requests/${companion}`)
+                          .update({ status: null });
+                      }
+                    }
                   }
-                }
+                );
               }}
             >
               <DeleteIcon />

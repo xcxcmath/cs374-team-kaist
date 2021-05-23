@@ -30,7 +30,12 @@ import Biography from './biography';
 
 export default observer(function CompanionPanel() {
   const theme = useTheme();
-  const { userID, openCompanionPanel, setOpenCompanionPanel } = useStore();
+  const {
+    userID,
+    openCompanionPanel,
+    setOpenCompanionPanel,
+    setSnackBarMessage,
+  } = useStore();
   const { setOtherPlan, setIsOtherPlanValid } = useStore((it) => it.mapStore);
   const [currentPlan, , ,] = useUserDatabase(userID, 'path', (text) => {
     try {
@@ -40,6 +45,10 @@ export default observer(function CompanionPanel() {
     }
   });
   const [companion, setCompanion, ,] = useUserDatabase(userID, 'companion');
+  const [companionMessage, setCompanionMessage, ,] = useUserDatabase(
+    userID,
+    'companionMessage'
+  );
 
   const [allRequests, , updateRequest] = useDatabase('requests');
   const requestsForPlan = useMemo(() => {
@@ -124,7 +133,6 @@ export default observer(function CompanionPanel() {
 
   const [openPostingPanel, setOpenPostingPanel] = useState(false);
   const [openProfilePanel, setOpenProfilePanel] = useState(false);
-  const [openReportPanel, setOpenReportPanel] = useState(false);
 
   useEffect(() => {
     if (!openCompanionPanel) {
@@ -197,6 +205,34 @@ export default observer(function CompanionPanel() {
     );
   }
 
+  useEffect(() => {
+    if (companionMessage === 'declined') {
+      console.log('declined');
+      setSnackBarMessage(
+        'Your respond was declined. How about finding another request?'
+      );
+    } else if (companionMessage === 'accepted') {
+      setSnackBarMessage(`Companion matching is done!`);
+    } else if (companionMessage === 'pending') {
+      setSnackBarMessage(`Response to your request is here! Please check.`);
+    }
+    setCompanionMessage(null);
+  }, [companionMessage, setCompanionMessage, setSnackBarMessage]);
+
+  useEffect(() => {
+    try {
+      const pathString = thisCompanion?.entry?.path;
+      if (pathString && openCompanionPanel) {
+        const path = JSON.parse(pathString);
+        setOtherPlan(path);
+      } else {
+        setOtherPlan(null);
+      }
+    } catch {
+      setOtherPlan(null);
+    }
+  }, [thisCompanion, setOtherPlan, openCompanionPanel]);
+
   return (
     <>
       {openProfilePanel && (
@@ -205,25 +241,49 @@ export default observer(function CompanionPanel() {
           visitText={thisRequest?.visitText}
           onPend={() => {
             if (thisCompanion) {
+              setCompanion(thisCompanion.id);
               database
                 .ref(`requests/${thisCompanion.id}`)
                 .update({ status: 'pending' });
-              setCompanion(thisCompanion.id);
               database
                 .ref(`users/${thisCompanion.id}`)
-                .update({ companion: userID });
+                .update({ companion: userID, companionMessage: 'pending' });
               setOpenProfilePanel(false);
+              setSnackBarMessage(
+                `Response to ${thisCompanion.entry.name} has been sent. Please wait...`
+              );
             }
           }}
           onAccept={() => {
-            updateOwnRequest({ status: 'accepted' });
+            if (thisCompanion) {
+              updateOwnRequest({ status: 'accepted' });
+              database
+                .ref(`users/${thisCompanion.id}`)
+                .update({ companionMessage: 'accepted' });
+            }
             setOpenProfilePanel(false);
           }}
           onCancel={() => {
             setOpenProfilePanel(false);
           }}
+          onDecline={() => {
+            if (thisCompanion) {
+              setCompanion(null);
+              updateOwnRequest({ status: null });
+              database
+                .ref(`users/${thisCompanion.id}`)
+                .update({ companion: null, companionMessage: 'declined' });
+            }
+            setOpenProfilePanel(false);
+          }}
+          onReportPosted={(text) => {
+            if (text) {
+              setSnackBarMessage(`Your report is posted.`);
+            }
+          }}
           status={thisRequest?.status}
           companion={thisCompanion}
+          userID={userID}
         />
       )}
       {openPostingPanel && (
@@ -240,14 +300,14 @@ export default observer(function CompanionPanel() {
           }}
         />
       )}
-      <Backdrop open={loading} style={{ zIndex: 4 }}>
+      <Backdrop open={loading && openCompanionPanel} style={{ zIndex: 4 }}>
         <CircularProgress />
       </Backdrop>
       <Grow in={openCompanionPanel} unmountOnExit mountOnEnter>
         <Card
           style={{
             position: 'absolute',
-            maxWidth: '80vmin',
+            width: '80vw',
             maxHeight: '40vmin',
             top: 5,
             left: 8,

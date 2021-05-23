@@ -23,6 +23,13 @@ const crimeData = [
     degree: 2,
     description: '8 events per day',
   },
+  {
+    coordinates: [127.36236, 36.36873],
+    category: "Geese's Theft",
+    id: '4',
+    degree: 2,
+    description: '2 events per day',
+  },
 ];
 
 export default class MapStore {

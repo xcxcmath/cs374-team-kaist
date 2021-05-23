@@ -4,6 +4,7 @@ import PlaceIcon from '@material-ui/icons/Place';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import { Fab, TextField, Paper } from '@material-ui/core';
 import RequestAlert from './../components/requestAlert';
+import { database } from '../stores/firebase';
 
 /*
 var name = 'Sofia';
@@ -32,7 +33,17 @@ export default function Biography(props) {
     kakao,
   } = props.companion.entry;
   const path = JSON.parse(pathString);
-  const { travelText, visitText, onPend, onAccept, onCancel, status } = props;
+  const {
+    travelText,
+    visitText,
+    onPend,
+    onAccept,
+    onCancel,
+    onDecline,
+    onReportPosted,
+    status,
+    userID,
+  } = props;
 
   var contact_info;
   var buttons;
@@ -40,6 +51,21 @@ export default function Biography(props) {
   var alertDiv;
   const [st, setSt] = useState(status);
   const [repDisplay, setRepDisplay] = useState(false);
+  const [reportText, setReportText] = useState('');
+  useEffect(() => {
+    if (userID && props.companion.id) {
+      (async () => {
+        const data = await database
+          .ref(`reports/${props.companion.id}/${userID}`)
+          .get();
+        if (data.exists()) {
+          setReportText(data.val());
+        } else {
+          setReportText('');
+        }
+      })();
+    }
+  }, [userID, props.companion.id]);
   let repStyle = {
     display: 'none',
   };
@@ -140,7 +166,12 @@ export default function Biography(props) {
           marginLeft: '-100px',
         }}
       >
-        <Fab color="secondary" variant="extended" style={{ marginRight: '6%' }}>
+        <Fab
+          color="secondary"
+          variant="extended"
+          style={{ marginRight: '6%' }}
+          onClick={onDecline}
+        >
           Decline
         </Fab>
         <Fab color="primary" variant="extended" style={{}}>
@@ -350,6 +381,8 @@ export default function Biography(props) {
                 multiline
                 rowsMax={3}
                 fullWidth
+                value={reportText}
+                onChange={(e) => setReportText(e.target.value)}
               />
             </div>
           </div>
@@ -373,6 +406,14 @@ export default function Biography(props) {
                 width: '50%',
                 textAlign: 'center',
                 borderLeft: '1px #5c5c5c solid',
+              }}
+              onClick={async () => {
+                if (!userID || !props.companion.id) return;
+                const toUpdate = reportText === '' ? null : reportText;
+                await database
+                  .ref(`reports/${props.companion.id}/${userID}`)
+                  .set(toUpdate);
+                onReportPosted(reportText);
               }}
             >
               Submit

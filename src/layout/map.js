@@ -163,19 +163,21 @@ function Map({ children }) {
             </div>
           </Popup>
         ))}
-        {currentPlan && (
-          <MapRoute
-            name="current-plan"
-            geojson={currentPlan.geojson}
-            lineColor={theme.palette.primary.main}
-          />
-        )}
         {otherPlan && (
           <MapRoute
             name="other-plan"
             geojson={otherPlan.geojson}
             lineColor={theme.palette.secondary.main}
-            lineOpacity={isOtherPlanValid ? 1 : 0.5}
+            circleRadius={12}
+            textSize={9}
+            lineOpacity={isOtherPlanValid ? 0.5 : 0.3}
+          />
+        )}
+        {currentPlan && (
+          <MapRoute
+            name="current-plan"
+            geojson={currentPlan.geojson}
+            lineColor={theme.palette.primary.main}
           />
         )}
         {mode === 'plan' ? (

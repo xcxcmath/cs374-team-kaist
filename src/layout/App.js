@@ -1,6 +1,19 @@
 import './App.css';
 import React from 'react';
 import { observer } from 'mobx-react';
+import {
+  Snackbar,
+  IconButton,
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+} from '@material-ui/core';
+import CloseIcon from '@material-ui/icons/Close';
+import { useTheme } from '@material-ui/core/styles';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
 
 import Radar from './radar';
 import BottomPlanList from './bottom-plan-list';
@@ -15,7 +28,16 @@ import CompanionPanel from './companion-panel';
 import useStore from '../hooks/use-store';
 
 function App() {
-  const { mode } = useStore();
+  const {
+    mode,
+    openSnackBar,
+    closeSnackBar,
+    snackBarDuration,
+    snackBarMessage,
+    dialog,
+    openDialog,
+    closeDialog,
+  } = useStore();
 
   return (
     <div className="App">
@@ -34,6 +56,48 @@ function App() {
         <BottomPlanList />
       </Map>
       <BottomButtonList />
+      <Snackbar
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        open={openSnackBar}
+        autoHideDuration={snackBarDuration}
+        onClose={closeSnackBar}
+        message={snackBarMessage}
+        action={
+          <IconButton size="small" color="inherit" onClick={closeSnackBar}>
+            <CloseIcon fontSize="small" />
+          </IconButton>
+        }
+      />
+      <Dialog open={openDialog} onClose={closeDialog} style={{ zIndex: 20 }}>
+        {dialog?.title && <DialogTitle>{dialog.title}</DialogTitle>}
+        <DialogContent>
+          <DialogContentText>{dialog?.text}</DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          {dialog?.onNo && (
+            <Button
+              onClick={() => {
+                dialog.onNo();
+                closeDialog();
+              }}
+              autoFocus
+            >
+              No
+            </Button>
+          )}
+          {dialog?.onYes && (
+            <Button
+              onClick={() => {
+                dialog.onYes();
+                closeDialog();
+              }}
+              color="secondary"
+            >
+              Yes
+            </Button>
+          )}
+        </DialogActions>
+      </Dialog>
     </div>
   );
 }

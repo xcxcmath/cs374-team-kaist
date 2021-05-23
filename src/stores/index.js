@@ -42,6 +42,11 @@ class RootStore {
   userID = process.env.REACT_APP_PRELOGIN ?? 'admin';
   openSettingPanel = false;
   openCompanionPanel = false;
+  openSnackBar = false;
+  snackBarMessage = '';
+  snackBarDuration = 5000;
+  openDialog = false;
+  dialog = null;
 
   constructor({ viewport }) {
     makeAutoObservable(this);
@@ -49,6 +54,10 @@ class RootStore {
     this.setUserID = this.setUserID.bind(this);
     this.setOpenSettingPanel = this.setOpenSettingPanel.bind(this);
     this.setOpenCompanionPanel = this.setOpenCompanionPanel.bind(this);
+    this.setSnackBarMessage = this.setSnackBarMessage.bind(this);
+    this.closeSnackBar = this.closeSnackBar.bind(this);
+    this.setDialog = this.setDialog.bind(this);
+    this.closeDialog = this.closeDialog.bind(this);
     this.mapStore = new MapStore(viewport);
 
     setInterval(() => this.toggleFlickerSwitch(), 1000);
@@ -90,6 +99,24 @@ class RootStore {
 
   setOpenCompanionPanel(open) {
     this.openCompanionPanel = open;
+  }
+  setSnackBarMessage(message) {
+    this.snackBarMessage = message;
+    if (message) {
+      this.openSnackBar = true;
+    }
+  }
+  closeSnackBar() {
+    this.openSnackBar = false;
+  }
+
+  setDialog(title, text, onNo, onYes) {
+    this.dialog = { title, text, onNo, onYes };
+    this.openDialog = true;
+  }
+  closeDialog() {
+    this.dialog = null;
+    this.openDialog = false;
   }
 }
 

@@ -32,6 +32,7 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import CloseIcon from '@material-ui/icons/Close';
 import DegreeLabel from '../components/degree-label';
+import GradientSlider from '../components/gradient-slider';
 
 import MapRoute from '../components/map-route';
 
@@ -324,7 +325,7 @@ const Inputs = observer(() => {
           <Box className={classes.controlsRoot}>
             <Box className={classes.slider}>
               <Typography variant="body2">Crime hotspot avoidance</Typography>
-              <Slider
+              <GradientSlider
                 marks={[
                   {
                     value: -2,

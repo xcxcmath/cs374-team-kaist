@@ -105,7 +105,7 @@ function Map({ children }) {
           if (clickedCrimeList.length) {
             showPopup(clickedCrimeList[0].properties.id);
           }
-          console.log(e.features);
+          //console.log(e.features);
         }}
       >
         <Source id="crime-data-source" type="geojson" data={crimeCircles}>

@@ -35,6 +35,7 @@ export default observer(function Login() {
           overflow: 'scroll',
         }}
       >
+          <img src={"icons/logo.jpg"} alt="Logo" style={{maxWidth:'100%'}}/>
         <div
           style={{
             display: 'flex',

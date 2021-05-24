@@ -4,6 +4,7 @@ import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import { Fab, Button, IconButton, Typography } from '@material-ui/core';
 import TimerIcon from '@material-ui/icons/Timer';
 import CloseIcon from '@material-ui/icons/Close';
+import Avatar from '@material-ui/core/Avatar';
 
 //example call:
 // <SwipeCard
@@ -82,22 +83,43 @@ export default function SwipeCard(props) {
         </div>
       </div>
     );
-  } else if (props.waiting === false) {
-    timeLeft = (
+  } else if (props.waiting !== true) {
+    const today = new Date();
+    var time;
+    var hDiff = 0;
+    var mDiff = 0;
+    var diff = 0;
+    var dDiff = 0;
+    if (props.time) {
+      hDiff =
+        parseInt(props?.time.toString().substring(11, 13)) - today.getHours();
+      mDiff =
+        parseInt(props?.time.toString().substring(14, 16)) - today.getMinutes();
+      dDiff =
+        parseInt(props?.time.toString().substring(8, 10)) - today.getDate();
+    }
+    mDiff += hDiff * 60 + dDiff * 24 * 60;
+
+    if (mDiff > 60) {
+      time = Math.floor(mDiff / 60) + ' h';
+    } else if (mDiff > 0) {
+      time = mDiff + ' min';
+    } else {
+      time = false;
+    }
+    timeLeft = time && (
       <div
         style={{
           display: 'flex',
-          width: '70px',
-          backgroundColor: 'lightblue',
-          height: '35px',
           textAlign: 'center',
+          color: 'grey',
         }}
       >
-        <div style={{ alignSelf: 'center', marginLeft: '1px' }}>
-          <TimerIcon size="small" />
+        <div style={{ alignSelf: 'center', fontSize: 3, marginLeft: '-1vmin' }}>
+          <TimerIcon style={{ fontSize: '16px' }} />
         </div>
-        <div style={{ alignSelf: 'center', fontSize: '16px' }}>
-          {props.timeLeft}
+        <div style={{ alignSelf: 'center', fontSize: '14px' }}>
+          &nbsp;{time}
         </div>
       </div>
     );
@@ -109,18 +131,28 @@ export default function SwipeCard(props) {
       }}
     >
       {props.onLeft && (
-        <IconButton onClick={props.onLeft}>
+        <IconButton onClick={props.onLeft} style={{ marginLeft: '-3vmin' }}>
           <ChevronLeftIcon color="action" />
         </IconButton>
       )}
       <div style={{ display: 'flex', height: '100%', alignItems: 'center' }}>
-        <img src={props.image} style={{ maxHeight: '15vmin' }} alt="profile" />
+        <Avatar
+          alt="profile"
+          src={props.image}
+          style={{
+            maxHeight: '17vmin',
+            maxWidth: '17vmin',
+            width: '60px',
+            height: '60px',
+          }}
+        />
       </div>
       <div
         style={{
           display: 'flex',
           flexDirection: 'column',
-          marginLeft: '6px',
+          marginLeft: '8px',
+          marginRight: '6vmin',
         }}
       >
         <div
@@ -129,8 +161,18 @@ export default function SwipeCard(props) {
             textAlign: 'left',
           }}
         >
-          {props.name} / {props.gender} / {props.age}
-          <br />
+          <div style={{ color: 'black' }}>{props.name}</div>
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              color: 'grey',
+              fontSize: '14px',
+            }}
+          >
+            {props.gender} • {props.age}
+          </div>
+          {timeLeft}
           {props.show && <>{props.phone}</>}
           {props.show && <>{props.kakao}</>}
         </div>
@@ -146,6 +188,7 @@ export default function SwipeCard(props) {
           style={{
             display: 'flex',
             flexDirection: 'row',
+            marginTop: '5px',
           }}
         >
           <Fab
@@ -154,13 +197,12 @@ export default function SwipeCard(props) {
             size="small"
             onClick={props.onBio}
           >
-            Go&nbsp;to&nbsp;Bio
+            About&nbsp;me
           </Fab>
-          {timeLeft}
         </div>
       </div>
       {props.onRight && (
-        <IconButton onClick={props.onRight}>
+        <IconButton onClick={props.onRight} style={{}}>
           <ChevronRightIcon color="action" />
         </IconButton>
       )}

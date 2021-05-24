@@ -168,6 +168,7 @@ export default observer(function CompanionPanel() {
           age={thisCompanion?.entry?.age}
           gender={thisCompanion?.entry?.gender}
           onBio={() => setOpenProfilePanel(true)}
+          time={thisRequest?.time}
           show
         />
       );
@@ -185,6 +186,7 @@ export default observer(function CompanionPanel() {
         name={entry.name}
         age={entry.age}
         gender={entry.gender}
+        time={thisRequest?.time}
         onLeft={() => setListIndex(listIndex > 0 ? listIndex - 1 : listIndex)}
         onRight={() => setListIndex(listIndex + 1)}
         onBio={() => {

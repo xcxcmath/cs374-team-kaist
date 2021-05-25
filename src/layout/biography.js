@@ -1,9 +1,5 @@
-import React, { useState, useEffect, createElement } from 'react';
-import HomeIcon from '@material-ui/icons/Home';
-import PlaceIcon from '@material-ui/icons/Place';
-import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+import React, { useState, useEffect } from 'react';
 import { Fab, TextField, Paper } from '@material-ui/core';
-import RequestAlert from './../components/requestAlert';
 import { database } from '../stores/firebase';
 
 /*
@@ -80,39 +76,29 @@ export default function Biography(props) {
   if (st === 'accepted') {
     contact_info = (
       <div>
-          <div
+        <div
           style={{
             display: 'flex',
-              flexDirection: 'column',
-              width: '92%',
-              marginLeft: 'auto',
-              marginRight: 'auto',
-              marginTop: '10px',
+            flexDirection: 'column',
+            width: '92%',
+            marginLeft: 'auto',
+            marginRight: 'auto',
+            marginTop: '10px',
           }}
         >
-            <TextField
-              label="Phone number"
-              value={phone}
-              readonly
-            />
-          {' '}
+          <TextField label="Phone number" value={phone} readonly />{' '}
         </div>
         <div
           style={{
             display: 'flex',
-              flexDirection: 'column',
-              width: '92%',
-              marginLeft: 'auto',
-              marginRight: 'auto',
-              marginTop: '10px',
+            flexDirection: 'column',
+            width: '92%',
+            marginLeft: 'auto',
+            marginRight: 'auto',
+            marginTop: '10px',
           }}
         >
-            <TextField
-              label="KakaoID"
-              value={kakao}
-              readonly
-            />
-          {' '}
+          <TextField label="KakaoID" value={kakao} readonly />{' '}
         </div>
       </div>
     );
@@ -250,114 +236,92 @@ export default function Biography(props) {
         <img src={profileImage} style={{ width: '40%' }} />
       </div>
 
-      <div style={{
+      <div
+        style={{
           display: 'flex',
-              flexDirection: 'column',
-              width: '92%',
-              marginLeft: 'auto',
-              marginRight: 'auto',
-              marginTop: '10px',}}>
-          <TextField
-              label="Name"
-              value={name}
-              readonly
-            />
-          {/*<div style={{ fontFamily: 'roboto, sans-serif', fontSize: '34px' }}>
+          flexDirection: 'column',
+          width: '92%',
+          marginLeft: 'auto',
+          marginRight: 'auto',
+          marginTop: '10px',
+        }}
+      >
+        <TextField label="Name" value={name} readonly />
+        {/*<div style={{ fontFamily: 'roboto, sans-serif', fontSize: '34px' }}>
           {age}
         </div>*/}
       </div>
-          {/*<div style={{ marginLeft: '4%' }}>{<HomeIcon />}</div>*/}
-        <div
-          style={{
-            display: 'flex',
-              flexDirection: 'column',
-              width: '92%',
-              marginLeft: 'auto',
-              marginRight: 'auto',
-              marginTop: '10px',
-          }}
-        >
-            <TextField
-              label="Age"
-              value={age}
-              readonly
-            />
-          {' '}
-        </div>
-        <div
-          style={{
-            display: 'flex',
-              flexDirection: 'column',
-              width: '92%',
-              marginLeft: 'auto',
-              marginRight: 'auto',
-              marginTop: '10px',
-          }}
-        >
-            <TextField
-              label="Country"
-              value={country}
-              readonly
-            />
-          {' '}
-        </div>
+      {/*<div style={{ marginLeft: '4%' }}>{<HomeIcon />}</div>*/}
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          width: '92%',
+          marginLeft: 'auto',
+          marginRight: 'auto',
+          marginTop: '10px',
+        }}
+      >
+        <TextField label="Age" value={age} readonly />{' '}
+      </div>
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          width: '92%',
+          marginLeft: 'auto',
+          marginRight: 'auto',
+          marginTop: '10px',
+        }}
+      >
+        <TextField label="Country" value={country} readonly />{' '}
+      </div>
       <div style={{ display: 'flex', alignItems: 'flex-start', width: '100%' }}>
-          {/*<div style={{ marginLeft: '4%' }}>{<AccountCircleIcon />}</div>*/}
+        {/*<div style={{ marginLeft: '4%' }}>{<AccountCircleIcon />}</div>*/}
         <div
           style={{
             display: 'flex',
-              flexDirection: 'column',
-              width: '92%',
-              marginLeft: 'auto',
-              marginRight: 'auto',
-              marginTop: '10px',
+            flexDirection: 'column',
+            width: '92%',
+            marginLeft: 'auto',
+            marginRight: 'auto',
+            marginTop: '10px',
           }}
         >
-            <TextField
-              label="Gender"
-              value={gender}
-              readonly
-            />
-          {' '}
+          <TextField label="Gender" value={gender} readonly />{' '}
         </div>
       </div>
-        <div
-          style={{
-            display: 'flex',
-              flexDirection: 'column',
-              width: '92%',
-              marginLeft: 'auto',
-              marginRight: 'auto',
-              marginTop: '10px',
-          }}
-        >
-            <TextField
-              label="Final Destination"
-              value={path.destination.place_name}
-              readonly
-            />
-          {' '}
-        </div>
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          width: '92%',
+          marginLeft: 'auto',
+          marginRight: 'auto',
+          marginTop: '10px',
+        }}
+      >
+        <TextField
+          label="Final Destination"
+          value={path.destination.place_name}
+          readonly
+        />{' '}
+      </div>
 
-        <div
-          style={{
-            display: 'flex',
-              flexDirection: 'column',
-              width: '92%',
-              marginLeft: 'auto',
-              marginRight: 'auto',
-              marginTop: '10px',
-          }}
-        >
-            <TextField
-              label="About Companion"
-              value={bio}
-              readonly
-            />
-          {' '}
-        </div>
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          width: '92%',
+          marginLeft: 'auto',
+          marginRight: 'auto',
+          marginTop: '10px',
+        }}
+      >
+        <TextField label="About Companion" value={bio} readonly />{' '}
+      </div>
 
-        {contact_info}
+      {contact_info}
 
       <div
         style={{
@@ -366,11 +330,13 @@ export default function Biography(props) {
           paddingBottom: '10px',
         }}
       >
+        {st === 'accepted' && (
           <Fab id="repBtn" color="secondary" variant="extended" style={{}}>
-          <div style={{}} onClick={() => setRepDisplay(true)}>
-            Report {name}
-          </div>
-        </Fab>
+            <div style={{}} onClick={() => setRepDisplay(true)}>
+              Report {name}
+            </div>
+          </Fab>
+        )}
 
         <div style={repStyle}>
           <div>
@@ -395,31 +361,44 @@ export default function Biography(props) {
               justifyContent: 'center',
             }}
           >
-              <Fab color="primary" variant="extended" style={{
-          position: 'absolute',
-          left: '25%',}}>
-          <div style={{}} onClick={() => setRepDisplay(false)}>
-            Cancel
-          </div>
-        </Fab>
-              <Fab color="secondary" variant="extended" style={{
-          position: 'absolute',
-          left: '75%',}}>
-          <div style={{}} onClick={async () => {
-                if (!userID || !props.companion.id) return;
-                const toUpdate = reportText === '' ? null : reportText;
-                await database
-                  .ref(`reports/${props.companion.id}/${userID}`)
-                  .set(toUpdate);
-                onReportPosted(reportText);
-              }}>
-            Submit
-          </div>
-        </Fab>
+            <Fab
+              color="primary"
+              variant="extended"
+              style={{
+                position: 'absolute',
+                left: '25%',
+              }}
+            >
+              <div style={{}} onClick={() => setRepDisplay(false)}>
+                Cancel
+              </div>
+            </Fab>
+            <Fab
+              color="secondary"
+              variant="extended"
+              style={{
+                position: 'absolute',
+                left: '75%',
+              }}
+            >
+              <div
+                style={{}}
+                onClick={async () => {
+                  if (!userID || !props.companion.id) return;
+                  const toUpdate = reportText === '' ? null : reportText;
+                  await database
+                    .ref(`reports/${props.companion.id}/${userID}`)
+                    .set(toUpdate);
+                  onReportPosted(reportText);
+                }}
+              >
+                Submit
+              </div>
+            </Fab>
           </div>
         </div>
       </div>
-      <div style={{width: '100%', height: '80px'}}/>
+      <div style={{ width: '100%', height: '80px' }} />
       {buttons}
       {alertDiv}
     </Paper>

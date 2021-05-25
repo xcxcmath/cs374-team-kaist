@@ -113,7 +113,12 @@ export default function Biography(props) {
           marginLeft: '-45px',
         }}
       >
-        <Fab color="secondary" variant="extended" onClick={onCancel}>
+        <Fab
+          color="secondary"
+          variant="extended"
+          onClick={onCancel}
+          aria-label="close biography"
+        >
           Go&nbsp;Back
         </Fab>
       </div>
@@ -135,11 +140,12 @@ export default function Biography(props) {
           variant="extended"
           style={{ marginRight: '6%' }}
           onClick={onDecline}
+          aria-label="Decline candidate"
         >
           Decline
         </Fab>
         <Fab color="primary" variant="extended" style={{}}>
-          <div style={{}} onClick={onAccept}>
+          <div style={{}} onClick={onAccept} aria-label="Accept candidate">
             Accept
           </div>
         </Fab>
@@ -162,10 +168,16 @@ export default function Biography(props) {
           variant="extended"
           style={{ marginRight: '6%' }}
           onClick={onCancel}
+          aria-label="Close biography"
         >
           Go&nbsp;Back
         </Fab>
-        <Fab color="primary" variant="extended" onClick={onPend}>
+        <Fab
+          color="primary"
+          variant="extended"
+          onClick={onPend}
+          aria-label="accept candidate"
+        >
           <div>Accept</div>
         </Fab>
       </div>
@@ -369,7 +381,11 @@ export default function Biography(props) {
                 left: '25%',
               }}
             >
-              <div style={{}} onClick={() => setRepDisplay(false)}>
+              <div
+                style={{}}
+                onClick={() => setRepDisplay(false)}
+                aria-label="Cancel report"
+              >
                 Cancel
               </div>
             </Fab>
@@ -391,6 +407,7 @@ export default function Biography(props) {
                     .set(toUpdate);
                   onReportPosted(reportText);
                 }}
+                aria-label="Submit report"
               >
                 Submit
               </div>

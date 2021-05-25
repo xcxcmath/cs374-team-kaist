@@ -243,6 +243,8 @@ export default observer(function CompanionPanel() {
       setSnackBarMessage(`Companion matching is done!`);
     } else if (companionMessage === 'pending') {
       setSnackBarMessage(`Response to your request is here! Please check.`);
+    } else if (companionMessage === 'deleted') {
+      setSnackBarMessage(`Your companion just canceled the matching with you.`);
     }
     setCompanionMessage(null);
   }, [companionMessage, setCompanionMessage, setSnackBarMessage]);

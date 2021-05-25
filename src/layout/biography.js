@@ -109,8 +109,7 @@ export default function Biography(props) {
           position: 'fixed',
           top: 'calc(99% - 50px)',
           width: '90px',
-          left: '50%',
-          marginLeft: '-45px',
+          left: '50%-45px',
         }}
       >
         <Fab
@@ -340,6 +339,8 @@ export default function Biography(props) {
           width: '100%',
           marginTop: '10px',
           paddingBottom: '10px',
+            marginLeft:'auto',
+            marginRight:'auto'
         }}
       >
         {st === 'accepted' && (

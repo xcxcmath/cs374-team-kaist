@@ -94,7 +94,16 @@ export default function NewRequest({ onCreate, onCancel }) {
         }}
       >
         Departure time
-        <TextField
+          </div>
+        <div
+        style={{
+          display: 'flex',
+          flexDirection: 'row',
+          width: '92%',
+          marginTop: '10px',
+          justifyContent: 'center',
+        }}><br />
+          <TextField
           type="datetime-local"
           value={time}
           onChange={(e) => setTime(e.target.value)}

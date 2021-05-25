@@ -77,7 +77,12 @@ export default function SwipeCard(props) {
             justifyContent: 'space-evenly',
           }}
         >
-          <Button variant="outlined" color="primary" onClick={props.onYes}>
+          <Button
+            variant="outlined"
+            color="primary"
+            onClick={props.onYes}
+            aria-label="Create request"
+          >
             Yes
           </Button>
         </div>
@@ -131,7 +136,11 @@ export default function SwipeCard(props) {
       }}
     >
       {props.onLeft && (
-        <IconButton onClick={props.onLeft} style={{ marginLeft: '-3vmin' }}>
+        <IconButton
+          onClick={props.onLeft}
+          style={{ marginLeft: '-3vmin' }}
+          aria-label="previous candidate"
+        >
           <ChevronLeftIcon color="action" />
         </IconButton>
       )}
@@ -196,13 +205,18 @@ export default function SwipeCard(props) {
             variant="extended"
             size="small"
             onClick={props.onBio}
+            aria-label="candidate biography"
           >
             About&nbsp;me
           </Fab>
         </div>
       </div>
       {props.onRight && (
-        <IconButton onClick={props.onRight} style={{}}>
+        <IconButton
+          onClick={props.onRight}
+          style={{}}
+          aria-label="next candidate"
+        >
           <ChevronRightIcon color="action" />
         </IconButton>
       )}

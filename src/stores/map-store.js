@@ -122,12 +122,13 @@ export default class MapStore {
     this.crimePopups = this.crimePopups.filter((it) => it.id !== id);
   }
 
-  addNear(id) {
+  addNear(id, onAdded) {
     const crime = this.crimeData.find((it) => it.id === id);
     if (!crime) return;
     if (this.crimeNear.findIndex((it) => it === id) !== -1) return;
     this.crimeNear.push(id);
     this.showPopup(id);
+    onAdded();
   }
 
   removeNear(id) {

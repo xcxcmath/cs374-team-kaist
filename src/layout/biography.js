@@ -200,47 +200,30 @@ export default function Biography(props) {
         <div
           style={{
             display: 'flex',
-            alignItems: 'flex-start',
-            width: '100%',
+            flexDirection: 'column',
+            width: '92%',
+            marginLeft: 'auto',
+            marginRight: 'auto',
             marginTop: '10px',
-            paddingBottom: '10px',
           }}
         >
-          <div
-            style={{
-              marginLeft: '4%',
-              textAlign: 'left',
-              fontFamily: 'roboto, sans-serif',
-              fontSize: '20px',
-              color: '#5c5c5c',
-              width: '92%',
-            }}
-          >
-            Reason for travel: {travelText}
-          </div>
+          <TextField label="Reason for travel" value={travelText} readonly />{' '}
         </div>
         <div
           style={{
             display: 'flex',
-            alignItems: 'flex-start',
-            width: '100%',
+            flexDirection: 'column',
+            width: '92%',
+            marginLeft: 'auto',
+            marginRight: 'auto',
             marginTop: '10px',
-            paddingBottom: '10px',
-            borderBottom: '1px #5c5c5c solid',
           }}
         >
-          <div
-            style={{
-              marginLeft: '4%',
-              textAlign: 'left',
-              fontFamily: 'roboto, sans-serif',
-              fontSize: '20px',
-              color: '#5c5c5c',
-              width: '92%',
-            }}
-          >
-            Reason for visiting the country: {visitText}
-          </div>
+          <TextField
+            label="Reason for visiting the country"
+            value={visitText}
+            readonly
+          />{' '}
         </div>
       </div>
     );
@@ -348,7 +331,7 @@ export default function Biography(props) {
       </div>
 
       {contact_info}
-
+      {travel_info}
       <div
         style={{
           width: '100%',

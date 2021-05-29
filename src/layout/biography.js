@@ -3,7 +3,6 @@ import HomeIcon from '@material-ui/icons/Home';
 import PlaceIcon from '@material-ui/icons/Place';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import { Fab, TextField, Paper } from '@material-ui/core';
-import RequestAlert from './../components/requestAlert';
 import { database } from '../stores/firebase';
 
 /*
@@ -48,7 +47,6 @@ export default function Biography(props) {
   var contact_info;
   var buttons;
   var travel_info;
-  var alertDiv;
   const [st, setSt] = useState(status);
   const [repDisplay, setRepDisplay] = useState(false);
   const [reportText, setReportText] = useState('');
@@ -121,7 +119,7 @@ export default function Biography(props) {
           color="secondary"
           variant="extended"
           onClick={onCancel}
-          aria-label="close biography"
+          aria-label="Close Biography"
         >
           Go&nbsp;Back
         </Fab>
@@ -144,12 +142,12 @@ export default function Biography(props) {
           variant="extended"
           style={{ marginRight: '6%' }}
           onClick={onDecline}
-          aria-label="Decline candidate"
+          aria-label="Decline Candidate"
         >
           Decline
         </Fab>
         <Fab color="primary" variant="extended" style={{}}>
-          <div style={{}} onClick={onAccept} aria-label="Accept candidate">
+          <div style={{}} onClick={onAccept} aria-label="Accept Candidate">
             Accept
           </div>
         </Fab>
@@ -172,7 +170,7 @@ export default function Biography(props) {
           variant="extended"
           style={{ marginRight: '6%' }}
           onClick={onCancel}
-          aria-label="Close biography"
+          aria-label="Close Biography"
         >
           Go&nbsp;Back
         </Fab>
@@ -180,7 +178,7 @@ export default function Biography(props) {
           color="primary"
           variant="extended"
           onClick={onPend}
-          aria-label="accept candidate"
+          aria-label="Accept Candidate"
         >
           <div>Accept</div>
         </Fab>
@@ -249,7 +247,11 @@ export default function Biography(props) {
       }}
     >
       <div>
-        <img src={profileImage} style={{ width: '40%' }} />
+        <img
+          src={profileImage}
+          style={{ width: '40%' }}
+          aria-label="profile image"
+        />
       </div>
 
       <div
@@ -386,7 +388,7 @@ export default function Biography(props) {
               <div
                 style={{}}
                 onClick={() => setRepDisplay(false)}
-                aria-label="Cancel report"
+                aria-label="Cancel Report"
               >
                 Cancel
               </div>
@@ -409,7 +411,7 @@ export default function Biography(props) {
                     .set(toUpdate);
                   onReportPosted(reportText);
                 }}
-                aria-label="Submit report"
+                aria-label="Submit Report"
               >
                 Submit
               </div>
@@ -419,7 +421,6 @@ export default function Biography(props) {
       </div>
       <div style={{ width: '100%', height: '80px' }} />
       {buttons}
-      {alertDiv}
     </Paper>
   );
 }

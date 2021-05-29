@@ -332,6 +332,7 @@ export default observer(function CompanionPanel() {
               setOpenCompanionPanel(false);
             }}
             style={{ position: 'absolute', top: 0, right: 0 }}
+            aria-label="Close Companion Card"
           >
             <CloseIcon />
           </IconButton>

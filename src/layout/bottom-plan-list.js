@@ -160,6 +160,7 @@ export default observer(function BottomPlanList() {
                   }
                 );
               }}
+              aria-label="Click to Focus"
             >
               <span
                 style={{
@@ -307,6 +308,7 @@ export default observer(function BottomPlanList() {
                   }
                 );
               }}
+              aria-label="Delete Plan"
             >
               <DeleteIcon />
             </IconButton>

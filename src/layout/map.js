@@ -1,4 +1,4 @@
-import React, { useRef, useMemo } from 'react';
+import React, { useRef } from 'react';
 import { observer } from 'mobx-react';
 import MapGL, {
   NavigationControl,
@@ -105,7 +105,6 @@ function Map({ children }) {
           if (clickedCrimeList.length) {
             showPopup(clickedCrimeList[0].properties.id);
           }
-          //console.log(e.features);
         }}
       >
         <Source id="crime-data-source" type="geojson" data={crimeCircles}>

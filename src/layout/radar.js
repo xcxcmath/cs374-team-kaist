@@ -16,6 +16,7 @@ export default observer(function Radar() {
     showRadar,
     clearNear,
   } = useStore((it) => it.mapStore);
+  const { setSnackBarMessage } = useStore();
   const invalidRadius = typeof radarRadius !== 'number';
 
   const [theta, setTheta] = useState(0);
@@ -50,17 +51,24 @@ export default observer(function Radar() {
       const here = turf.point([userCoords.longitude, userCoords.latitude]);
       const isInside = (coords) =>
         turf.distance(turf.point(coords), here) < radarRadius + 0.25;
+
+      let added = false;
       crimeData.forEach(({ coordinates, id }) => {
         if (isInside(coordinates)) {
-          addNear(id);
+          addNear(id, () => {
+            added = true;
+          });
         } else {
           removeNear(id);
         }
       });
+      if (added) {
+        setSnackBarMessage("You've just meet new crime hotspot! Please check.");
+      }
     } else {
       clearNear();
     }
-  }, [crimeData, userCoords, radarRadius, invalidRadius, addNear, removeNear, showRadar, clearNear]);
+  }, [crimeData, userCoords, radarRadius, invalidRadius, addNear, removeNear, showRadar, clearNear, setSnackBarMessage]);
 
   if (!userCoords || invalidRadius || !showRadar) {
     return <></>;

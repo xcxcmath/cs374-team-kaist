@@ -18,7 +18,6 @@ import {
   InputAdornment,
   TextField,
   CircularProgress,
-  Slider,
   Typography,
   Button,
   Box,

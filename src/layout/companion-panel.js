@@ -13,10 +13,7 @@ import {
   IconButton,
   Card,
   CardContent,
-  FormGroup,
-  FormControlLabel,
-  Checkbox,
-  Slider,
+  Typography,
   Backdrop,
   CircularProgress,
 } from '@material-ui/core';
@@ -148,62 +145,91 @@ export default observer(function CompanionPanel() {
     if (thisRequest?.status === 'pending') {
       if (isOwnRequest) {
         inside = (
+          <>
+            <Typography variant="body2" color="textSecondary" gutterBottom>
+              Here is a response for your request!
+            </Typography>
+            <SwipeCard
+              image={thisCompanion?.entry?.profileImage}
+              name={thisCompanion?.entry?.name}
+              age={thisCompanion?.entry?.age}
+              gender={thisCompanion?.entry?.gender}
+              onBio={() => setOpenProfilePanel(true)}
+              show
+            />
+          </>
+        );
+      } else {
+        inside = (
+          <>
+            <SwipeCard empty waiting />
+          </>
+        );
+      }
+    } else if (thisRequest?.status === 'accepted') {
+      inside = (
+        <>
+          <Typography variant="body2" color="textSecondary" gutterBottom>
+            Your companion
+          </Typography>
           <SwipeCard
             image={thisCompanion?.entry?.profileImage}
             name={thisCompanion?.entry?.name}
             age={thisCompanion?.entry?.age}
             gender={thisCompanion?.entry?.gender}
             onBio={() => setOpenProfilePanel(true)}
+            time={thisRequest?.time}
             show
           />
-        );
-      } else {
-        inside = <SwipeCard empty waiting />;
-      }
-    } else if (thisRequest?.status === 'accepted') {
-      inside = (
-        <SwipeCard
-          image={thisCompanion?.entry?.profileImage}
-          name={thisCompanion?.entry?.name}
-          age={thisCompanion?.entry?.age}
-          gender={thisCompanion?.entry?.gender}
-          onBio={() => setOpenProfilePanel(true)}
-          time={thisRequest?.time}
-          show
-        />
+        </>
       );
     } else {
       // something wrong? or loading..
-      inside = <SwipeCard empty waiting />;
+      inside = (
+        <>
+          <SwipeCard empty waiting />
+        </>
+      );
     }
   } else if (isOwnRequest) {
-    inside = <SwipeCard empty waiting />;
+    inside = (
+      <>
+        <SwipeCard empty waiting />
+      </>
+    );
   } else if (thisCompanion) {
     const { id, entry } = thisCompanion;
     inside = (
-      <SwipeCard
-        image={entry.profileImage}
-        name={entry.name}
-        age={entry.age}
-        gender={entry.gender}
-        time={thisRequest?.time}
-        onLeft={() => setListIndex(listIndex > 0 ? listIndex - 1 : listIndex)}
-        onRight={() => setListIndex(listIndex + 1)}
-        onBio={() => {
-          setOpenProfilePanel(true);
-        }}
-        show={id === companion}
-      />
+      <>
+        <Typography variant="body2" color="textSecondary" gutterBottom>
+          Here are others' companion requests.
+        </Typography>
+        <SwipeCard
+          image={entry.profileImage}
+          name={entry.name}
+          age={entry.age}
+          gender={entry.gender}
+          time={thisRequest?.time}
+          onLeft={() => setListIndex(listIndex > 0 ? listIndex - 1 : listIndex)}
+          onRight={() => setListIndex(listIndex + 1)}
+          onBio={() => {
+            setOpenProfilePanel(true);
+          }}
+          show={id === companion}
+        />{' '}
+      </>
     );
   } else {
     inside = (
-      <SwipeCard
-        empty
-        onLeft={() => setListIndex(listIndex > 0 ? listIndex - 1 : listIndex)}
-        onYes={() => {
-          setOpenPostingPanel(true);
-        }}
-      />
+      <>
+        <SwipeCard
+          empty
+          onLeft={() => setListIndex(listIndex > 0 ? listIndex - 1 : listIndex)}
+          onYes={() => {
+            setOpenPostingPanel(true);
+          }}
+        />
+      </>
     );
   }
 
@@ -217,6 +243,8 @@ export default observer(function CompanionPanel() {
       setSnackBarMessage(`Companion matching is done!`);
     } else if (companionMessage === 'pending') {
       setSnackBarMessage(`Response to your request is here! Please check.`);
+    } else if (companionMessage === 'deleted') {
+      setSnackBarMessage(`Your companion just canceled the matching with you.`);
     }
     setCompanionMessage(null);
   }, [companionMessage, setCompanionMessage, setSnackBarMessage]);
@@ -302,7 +330,7 @@ export default observer(function CompanionPanel() {
           }}
         />
       )}
-      <Backdrop open={loading && openCompanionPanel} style={{ zIndex: 4 }}>
+      <Backdrop open={loading && openCompanionPanel} style={{ zIndex: 10 }}>
         <CircularProgress />
       </Backdrop>
       <Grow in={openCompanionPanel} unmountOnExit mountOnEnter>
@@ -336,7 +364,9 @@ export default observer(function CompanionPanel() {
           >
             <CloseIcon />
           </IconButton>
-          <CardContent>{inside}</CardContent>
+          <CardContent style={{ padding: '8px 8px 16px 8px' }}>
+            {inside}
+          </CardContent>
         </Card>
       </Grow>
     </>

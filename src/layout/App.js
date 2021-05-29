@@ -12,8 +12,6 @@ import {
   DialogActions,
 } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
-import { useTheme } from '@material-ui/core/styles';
-import useMediaQuery from '@material-ui/core/useMediaQuery';
 
 import Radar from './radar';
 import BottomPlanList from './bottom-plan-list';

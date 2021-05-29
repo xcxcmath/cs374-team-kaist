@@ -15,7 +15,6 @@ import {
   Switch,
   Typography,
 } from '@material-ui/core';
-import { useTheme } from '@material-ui/core/styles';
 import CloseIcon from '@material-ui/icons/Close';
 
 import GradientSlider from '../components/gradient-slider';
@@ -33,9 +32,6 @@ export default observer(function SettingPanel() {
     setRadarRadius,
   } = useStore((it) => it.mapStore);
   const [, , updateSetting] = useUserDatabase(userID, 'setting');
-  const theme = useTheme();
-
-  const sliderConst = radarRadius ? radarRadius / 5 : 0;
 
   return (
     <Grow in={openSettingPanel} mountOnEnter unmountOnExit>
@@ -107,7 +103,6 @@ export default observer(function SettingPanel() {
                   width: '100%',
                 }}
               >
-                <Typography variant="body2">Radar Radius</Typography>
                 <FormControlLabel
                   style={{ margin: 0 }}
                   control={
@@ -127,6 +122,7 @@ export default observer(function SettingPanel() {
                     />
                   }
                 />
+                <Typography variant="body2">Radar Radius</Typography>
               </div>
             </FormGroup>
           </FormControl>

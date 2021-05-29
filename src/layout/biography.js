@@ -1,10 +1,9 @@
-import React, { useState, useEffect, createElement } from 'react';
-import HomeIcon from '@material-ui/icons/Home';
-import PlaceIcon from '@material-ui/icons/Place';
-import AccountCircleIcon from '@material-ui/icons/AccountCircle';
-import { Fab, TextField, Paper } from '@material-ui/core';
-import RequestAlert from './../components/requestAlert';
+import React, { useState, useEffect } from 'react';
+import { Fab, TextField, Paper, Divider } from '@material-ui/core';
+import ReportIcon from '@material-ui/icons/Report';
 import { database } from '../stores/firebase';
+
+import { countryToFlag, countries } from '../utils/countries';
 
 /*
 var name = 'Sofia';
@@ -32,6 +31,16 @@ export default function Biography(props) {
     phone,
     kakao,
   } = props.companion.entry;
+  const countryEntry = countries.find((it) => it.code === country);
+  const countryString = countryEntry
+    ? `${countryToFlag(countryEntry.code)} ${countryEntry.label}`
+    : '?';
+  const genderString =
+    gender === 'male'
+      ? 'Male'
+      : gender === 'female'
+      ? 'Female'
+      : 'Prefer not to mention';
   const path = JSON.parse(pathString);
   const {
     travelText,
@@ -111,10 +120,10 @@ export default function Biography(props) {
         style={{
           display: 'flex',
           position: 'fixed',
-          top: 'calc(99% - 50px)',
-          width: '90px',
+          bottom: 0,
           left: '50%',
-          marginLeft: '-45px',
+          width: 90,
+          transform: 'translate(-50%, -50%)',
         }}
       >
         <Fab
@@ -133,10 +142,10 @@ export default function Biography(props) {
         style={{
           display: 'flex',
           position: 'fixed',
-          top: 'calc(99% - 50px)',
-          width: '200px',
+          bottom: 0,
           left: '50%',
-          marginLeft: '-100px',
+          width: 200,
+          transform: 'translate(-50%, -50%)',
         }}
       >
         <Fab
@@ -161,10 +170,10 @@ export default function Biography(props) {
         style={{
           display: 'flex',
           position: 'fixed',
-          top: 'calc(99% - 50px)',
-          width: '200px',
+          bottom: 0,
           left: '50%',
-          marginLeft: '-100px',
+          width: 200,
+          transform: 'translate(-50%, -50%)',
         }}
       >
         <Fab
@@ -191,47 +200,30 @@ export default function Biography(props) {
         <div
           style={{
             display: 'flex',
-            alignItems: 'flex-start',
-            width: '100%',
+            flexDirection: 'column',
+            width: '92%',
+            marginLeft: 'auto',
+            marginRight: 'auto',
             marginTop: '10px',
-            paddingBottom: '10px',
           }}
         >
-          <div
-            style={{
-              marginLeft: '4%',
-              textAlign: 'left',
-              fontFamily: 'roboto, sans-serif',
-              fontSize: '20px',
-              color: '#5c5c5c',
-              width: '92%',
-            }}
-          >
-            Reason for travel: {travelText}
-          </div>
+          <TextField label="Reason for travel" value={travelText} readonly />{' '}
         </div>
         <div
           style={{
             display: 'flex',
-            alignItems: 'flex-start',
-            width: '100%',
+            flexDirection: 'column',
+            width: '92%',
+            marginLeft: 'auto',
+            marginRight: 'auto',
             marginTop: '10px',
-            paddingBottom: '10px',
-            borderBottom: '1px #5c5c5c solid',
           }}
         >
-          <div
-            style={{
-              marginLeft: '4%',
-              textAlign: 'left',
-              fontFamily: 'roboto, sans-serif',
-              fontSize: '20px',
-              color: '#5c5c5c',
-              width: '92%',
-            }}
-          >
-            Reason for visiting the country: {visitText}
-          </div>
+          <TextField
+            label="Reason for visiting the country"
+            value={visitText}
+            readonly
+          />{' '}
         </div>
       </div>
     );
@@ -246,6 +238,7 @@ export default function Biography(props) {
         height: '100vh',
         zIndex: 10,
         overflow: 'scroll',
+        paddingTop: 10,
       }}
     >
       <div>
@@ -290,7 +283,7 @@ export default function Biography(props) {
           marginTop: '10px',
         }}
       >
-        <TextField label="Country" value={country} readonly />{' '}
+        <TextField label="Country" value={countryString} readonly />{' '}
       </div>
       <div style={{ display: 'flex', alignItems: 'flex-start', width: '100%' }}>
         {/*<div style={{ marginLeft: '4%' }}>{<AccountCircleIcon />}</div>*/}
@@ -304,7 +297,7 @@ export default function Biography(props) {
             marginTop: '10px',
           }}
         >
-          <TextField label="Gender" value={gender} readonly />{' '}
+          <TextField label="Gender" value={genderString} readonly />{' '}
         </div>
       </div>
       <div
@@ -338,21 +331,31 @@ export default function Biography(props) {
       </div>
 
       {contact_info}
-
+      {travel_info}
       <div
         style={{
           width: '100%',
           marginTop: '10px',
           paddingBottom: '10px',
+          marginLeft: 'auto',
+          marginRight: 'auto',
         }}
       >
-        <Fab id="repBtn" color="secondary" variant="extended" style={{}}>
-          <div style={{}} onClick={() => setRepDisplay(true)}>
+        {st === 'accepted' && !repDisplay && (
+          <Fab
+            id="repBtn"
+            color="secondary"
+            variant="extended"
+            size="small"
+            onClick={() => setRepDisplay(true)}
+          >
+            <ReportIcon />
             Report {name}
-          </div>
-        </Fab>
+          </Fab>
+        )}
 
         <div style={repStyle}>
+          <Divider style={{ margin: 10 }} />
           <div>
             <div style={{ alignSelf: 'center' }}>
               <TextField
@@ -372,47 +375,33 @@ export default function Biography(props) {
               marginTop: '7px',
               display: 'flex',
               flexDirection: 'row',
-              justifyContent: 'center',
+              justifyContent: 'space-evenly',
             }}
           >
             <Fab
-              color="primary"
               variant="extended"
-              style={{
-                position: 'absolute',
-                left: '25%',
-              }}
+              size="small"
+              aria-label="Cancel report"
+              onClick={() => setRepDisplay(false)}
             >
-              <div
-                style={{}}
-                onClick={() => setRepDisplay(false)}
-                aria-label="Cancel report"
-              >
-                Cancel
-              </div>
+              Cancel
             </Fab>
             <Fab
-              color="secondary"
+              color="primary"
               variant="extended"
-              style={{
-                position: 'absolute',
-                left: '75%',
+              size="small"
+              aria-label="Submit report"
+              onClick={async () => {
+                if (!userID || !props.companion.id) return;
+                const toUpdate = reportText === '' ? null : reportText;
+                await database
+                  .ref(`reports/${props.companion.id}/${userID}`)
+                  .set(toUpdate);
+                onReportPosted(reportText);
               }}
             >
-              <div
-                style={{}}
-                onClick={async () => {
-                  if (!userID || !props.companion.id) return;
-                  const toUpdate = reportText === '' ? null : reportText;
-                  await database
-                    .ref(`reports/${props.companion.id}/${userID}`)
-                    .set(toUpdate);
-                  onReportPosted(reportText);
-                }}
-                aria-label="Submit report"
-              >
-                Submit
-              </div>
+              <ReportIcon />
+              Submit
             </Fab>
           </div>
         </div>

@@ -1,31 +1,53 @@
-# Getting Started with Create React App
-
-## Project Due
-
-- 5/19 : Components Designs
-- 5/26 : PPT
-
-**PLEASE work on your own branch, not master**
+# The Kare
 
 ---
 
-## TODO
+## Repository Description
 
-### general
+The names in parenthesis indicate who *designed* for that.
+Almost all logics and linkage for firebase are implemented by BeomJu.
 
-- (Done) Message box for checking deletion
-- (partially done) Snackbar to show what happened
+- `public` : including main HTML, logo, and icons (+ favicon)
+- `src` : implementations
 
-### map
+In `src`
 
-- applying Jihun and Assel's works (?)
+- `GradientContinuousSlider`, `GradientDiscreteSlider` : (Jihun) testing gradient slider
+- `components` : components without context
+  - `degree-label.js` : (BeomJu) flickering typographic hotspot symbol
+  - `gradient-slider.js` : Wrapper for Jihun's gradient slider
+  - `map-route.js` : (BeomJu) Displaying the path
+  - `requestAlert.js` : (Arsen) testing snackbar
+  - `swipeCard.js` : (Arsen) showing brief companion info.
+- `hooks` : custom React hooks
+  - `use-database.js` : CRUD operation support for firebase realtime database
+  - `use-store.js` : MobX context consumer
+- `layout` : components with MobX context
+  - `App.js`, `App.css` : (BeomJu) Overall layout for app + snackbar & messagebox
+  - `biography.js` : (Arsen & Assel) Displaying other's detailed profile + Report form
+  - `bottom-button-list.js` : (BeomJu) Displaying profile button & setting button on ~~bottom~~ top right
+  - `bottom-plan-list.js` : (BeomJu) Displaying "Find path" button or current plan panel
+  - `companion-panel.js` : (Arsen) Displaying request list and info of each item, or matched companion info
+  - `login.js` : (Arsen, Assel) Login frame
+  - `map-directions-control.js` : (BeomJu) directions input panel
+  - `map.js` : (BeomJu) `react-map-gl` things including hotspots, popups, radar, and paths (imported from other files)
+  - `newRequest.js` : (BeomJu & Arsen) Request posting
+  - `radar.js` : (BeomJu) Displaying radar
+  - `screen-border.js` : (BeomJu) Displaying red border when hotspots come nearby
+  - `setting-panel.js` : (BeomJu) Setting panel
+  - `updateProfile.js` : (Arsen) updating or creating own profile
+- `stores` : for MobX contexts and firebase
+  - `firebase.js` : realtime database instance
+  - `index.js` : combining map & app contexts
+  - `map-directions-store.js` : separate MobX context, migrated from `@mapbox/mapbox-gl-directions`
+  - `map-store.js` : MobX context for map display
+- `utils`
+  - `colors.js` : color interpolation for gradient slider
+  - `countries.js` : country list and their labels and infos.
+  - `directions.js` : utility functions used for `layout/map-directions.control.js`, some of them are referred from `@mapbox/mapbox-gl-directions`
+- `index.js`, `index.css` : React entry point
 
-### companion
-
-- More robuts logics for matching companions
-- More materialized designs for companion frames
-- Deleting waiting & pending request (those for `accepted` are implemented)
-- Posting report
+---
 
 ## How to test
 

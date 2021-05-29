@@ -1,4 +1,4 @@
-import React, { useContext, useMemo } from 'react';
+import React, { useContext } from 'react';
 import { MapContext } from 'react-map-gl';
 
 import {
@@ -295,7 +295,10 @@ export default observer(function BottomPlanList() {
                       setCompanion(null);
                       database
                         .ref(`users/${companion}`)
-                        .update({ companion: null });
+                        .update({
+                          companion: null,
+                          companionMessage: 'deleted',
+                        });
                       const ref = database.ref(`requests/${companion}`);
                       const data = await ref.get();
                       if (data.exists()) {

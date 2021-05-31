@@ -337,7 +337,8 @@ export default observer(function CompanionPanel() {
         <Card
           style={{
             position: 'absolute',
-            width: '80vw',
+            width: '80vmin',
+            maxWidth: 400,
             maxHeight: '40vmin',
             top: 5,
             left: 8,

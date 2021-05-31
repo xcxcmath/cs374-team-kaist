@@ -4,6 +4,7 @@ import ReportIcon from '@material-ui/icons/Report';
 import { database } from '../stores/firebase';
 
 import { countryToFlag, countries } from '../utils/countries';
+import './biography.css';
 
 /*
 var name = 'Sofia';
@@ -228,18 +229,7 @@ export default function Biography(props) {
     );
   }
   return (
-    <Paper
-      style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        width: '100vw',
-        height: '100vh',
-        zIndex: 10,
-        overflow: 'scroll',
-        paddingTop: 10,
-      }}
-    >
+    <Paper className="biography-container">
       <div>
         <img
           src={profileImage}

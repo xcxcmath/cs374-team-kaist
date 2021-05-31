@@ -22,6 +22,13 @@ import DegreeLabel, {
   circleLabelColors,
 } from '../components/degree-label';
 
+import './map.css';
+
+window.addEventListener('resize', () => {
+  let vh = window.innerHeight * 0.01;
+  document.documentElement.style.setProperty('--vh', `${vh}px`);
+});
+
 const GeocoderWrapper = observer(({ mapRef, containerRef }) => {
   const { accessToken, setViewport } = useStore((it) => it.mapStore);
 
@@ -72,14 +79,7 @@ function Map({ children }) {
   const geocoderContainerRef = useRef();
 
   return (
-    <div
-      style={{
-        position: 'absolute',
-        width: '100vw',
-        height: '100vh',
-        zIndex: -10,
-      }}
-    >
+    <div className="map-container">
       <div
         ref={geocoderContainerRef}
         style={{

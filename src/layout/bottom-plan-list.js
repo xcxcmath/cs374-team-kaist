@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { MapContext } from 'react-map-gl';
+import { MapContext, _useMapControl as useMapControl } from 'react-map-gl';
 
 import {
   Slide,
@@ -31,7 +31,12 @@ import DegreeLabel from '../components/degree-label';
 import utils from '../utils/directions';
 
 export default observer(function BottomPlanList() {
-  const context = useContext(MapContext);
+  //const context = useContext(MapContext);
+  const { context, containerRef } = useMapControl({
+    onDragStart: (evt) => evt.stopPropagation(),
+    onClick: (evt) => evt.stopPropagation(),
+    //onPinchStart: (evt) => evt.stopPropagation(),
+  });
   const { viewport } = context;
   const theme = useTheme();
   const {
@@ -116,10 +121,11 @@ export default observer(function BottomPlanList() {
           display: 'flex',
           justifyContent: 'flex-start',
           alignItems: 'center',
-          maxWidth: '90vmin',
+          width: '90vmin',
+          maxWidth: 450,
         }}
       >
-        <Card style={{ width: '100%' }}>
+        <Card style={{ width: '100%' }} ref={containerRef}>
           <CardContent style={{ padding: '5px 10px' }}>
             <Typography
               variant="h6"
@@ -265,7 +271,6 @@ export default observer(function BottomPlanList() {
               color="primary"
               startIcon={<PeopleIcon />}
               onClick={(e) => {
-                e.stopPropagation();
                 setOpenCompanionPanel(true);
               }}
             >
@@ -276,7 +281,6 @@ export default observer(function BottomPlanList() {
               variant="outlined"
               color="secondary"
               onClick={async (e) => {
-                e.stopPropagation();
                 let text = 'Do you want to delete current plan?';
                 if (ownRequest) {
                   text += ' Your request will be canceled as well.';
@@ -294,12 +298,10 @@ export default observer(function BottomPlanList() {
                     }
                     if (companion) {
                       setCompanion(null);
-                      database
-                        .ref(`users/${companion}`)
-                        .update({
-                          companion: null,
-                          companionMessage: 'deleted',
-                        });
+                      database.ref(`users/${companion}`).update({
+                        companion: null,
+                        companionMessage: 'deleted',
+                      });
                       const ref = database.ref(`requests/${companion}`);
                       const data = await ref.get();
                       if (data.exists()) {

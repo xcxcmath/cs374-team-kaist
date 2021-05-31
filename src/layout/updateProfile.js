@@ -20,6 +20,7 @@ import RequestAlert from './../components/requestAlert';
 import useStore from '../hooks/use-store';
 import { useUserDatabase } from '../hooks/use-database';
 import { countryToFlag, countries } from '../utils/countries';
+import './updateProfile.css';
 
 export default observer(function UpdateProfile({
   title = 'Update Profile',
@@ -101,16 +102,7 @@ export default observer(function UpdateProfile({
         <CircularProgress color="inherit" />
       </Backdrop>
       <Slide in={true}>
-        <Paper
-          elevation={3}
-          style={{
-            position: 'fixed',
-            width: '100vw',
-            height: '100vh',
-            zIndex: 10,
-            overflow: 'scroll',
-          }}
-        >
+        <Paper elevation={3} className="update-profile-container">
           <div
             style={{
               display: 'flex',

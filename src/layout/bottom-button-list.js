@@ -20,10 +20,18 @@ export default observer(function BottomButtonList() {
         flexDirection: 'column',
       }}
     >
-      <Fab size="small" onClick={() => setMode('profile')}>
+      <Fab
+        size="small"
+        onClick={() => setMode('profile')}
+        aria-label="Update Profile"
+      >
         <AccountCircleIcon />
       </Fab>
-      <Fab size="small" onClick={() => setOpenSettingPanel(true)}>
+      <Fab
+        size="small"
+        onClick={() => setOpenSettingPanel(true)}
+        aria-label="Settings"
+      >
         <TuneIcon />
       </Fab>
     </div>

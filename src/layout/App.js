@@ -61,7 +61,12 @@ function App() {
         onClose={closeSnackBar}
         message={snackBarMessage}
         action={
-          <IconButton size="small" color="inherit" onClick={closeSnackBar}>
+          <IconButton
+            size="small"
+            color="inherit"
+            onClick={closeSnackBar}
+            aria-label="Close Snackbar"
+          >
             <CloseIcon fontSize="small" />
           </IconButton>
         }
@@ -79,6 +84,7 @@ function App() {
                 closeDialog();
               }}
               autoFocus
+              aria-label="Cancel plan deletion"
             >
               No
             </Button>
@@ -90,6 +96,7 @@ function App() {
                 closeDialog();
               }}
               color="secondary"
+              aria-label="Delete plan"
             >
               Yes
             </Button>

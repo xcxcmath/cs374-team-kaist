@@ -427,6 +427,7 @@ const Inputs = observer(() => {
                           );
                         }
                       }}
+                      aria-label="Current Location"
                     >
                       <SvgIcon viewBox="0 0 20 20">
                         <path

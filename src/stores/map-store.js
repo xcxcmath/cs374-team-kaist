@@ -1,7 +1,8 @@
 import { makeAutoObservable } from 'mobx';
 import * as turf from '@turf/turf/dist/js';
+import { database } from './firebase';
 
-const crimeData = [
+/*const crimeData = [
   {
     coordinates: [126.9767, 37.575],
     category: 'Theft',
@@ -30,14 +31,14 @@ const crimeData = [
     degree: 2,
     description: '2 events per day',
   },
-];
+];*/
 
 export default class MapStore {
   viewport = null;
   accessToken = process.env.REACT_APP_MAPBOX_KEY;
   otherPlan = null;
   isOtherPlanValid = false;
-  crimeData = crimeData;
+  crimeData = [];
   crimeCircles = { type: 'FeatureCollection', features: [] };
   crimePopups = [];
   crimeNear = [];
@@ -65,6 +66,15 @@ export default class MapStore {
 
     this.viewport = viewport;
     this.updateCrimeCircles();
+
+    database.ref('crimes/').on('value', (snapshot) => {
+      const obj = snapshot.val() ?? {};
+      const arr = Object.entries(obj).map(([id, val]) => {
+        const { lng, lat, category, degree, description } = val;
+        return { coordinates: [lng, lat], id, degree, description, category };
+      });
+      this.setCrimeData(arr);
+    });
   }
 
   updateCrimeCircles() {

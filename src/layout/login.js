@@ -13,7 +13,7 @@ import useStore from '../hooks/use-store';
 import { database } from '../stores/firebase';
 
 export default observer(function Login() {
-  const { mode, setMode, setUserID } = useStore();
+  const { mode, setMode, setUserID, setSnackBarMessage } = useStore();
   const { injectMapSettings } = useStore((it) => it.mapStore);
   const [loading, setLoading] = useState(false);
   const ref = useMemo(() => database.ref('users'), []);
@@ -35,7 +35,7 @@ export default observer(function Login() {
           overflow: 'scroll',
         }}
       >
-          <img src={"icons/logo.jpg"} alt="Logo" style={{maxWidth:'100%'}}/>
+        <img src={'icons/logo.jpg'} alt="Logo" style={{ maxWidth: '100%' }} />
         <div
           style={{
             display: 'flex',
@@ -75,7 +75,7 @@ export default observer(function Login() {
           color="primary"
           variant="outlined"
           onClick={async () => {
-            if (id.length <= 20 && /^[A-Za-z0-9]+$/.test(id)) {
+            if (id.length <= 20 && id.length > 0 && /^[A-Za-z0-9]+$/.test(id)) {
               setLoading(true);
               const userData = (await ref.child(id).get()).val();
               if (userData) {
@@ -91,6 +91,10 @@ export default observer(function Login() {
                 setLoading(false);
                 setMode('login-profile');
               }
+            } else {
+              setSnackBarMessage(
+                'ID must consist of only alphabets and digits with length <= 20.'
+              );
             }
           }}
         >

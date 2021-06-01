@@ -4,7 +4,7 @@
 
 ## Repository Description
 
-The names in parenthesis indicate who *designed* for that.
+The names in parenthesis indicate who _designed_ for that.
 Almost all logics and linkage for firebase are implemented by BeomJu.
 
 - `public` : including main HTML, logo, and icons (+ favicon)
@@ -51,21 +51,11 @@ In `src`
 
 ## How to test
 
-**Please prepare 2 ID that you want**
-For example,
-
-- Jihun: `jihun` and `jihun2`
-- Arsen: `arsen` and `arsen2`
-- Assel: `assel` and `assel2`
-
-Or, if your want to test with just one ID, you can configure auto-login on `.env` file.
-Please uncomment line containing `REACT_APP_PRELOGIN` and **set the ID as your one.**
-
-Now, you don't have to change the mapbox public key and firebase config.
+**The details are in DP4 report file. Please check them carefully rather than this README.**
 
 ## How to Login
 
-Just put in your preferred ID.
+Just put in your preferred ID satisfying `[A-Za-z0-9]+`.
 
 - If it is new, sign up frame is respawned
 - If it is old, main frame is respawned

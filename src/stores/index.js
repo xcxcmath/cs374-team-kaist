@@ -47,6 +47,7 @@ class RootStore {
   snackBarDuration = 5000;
   openDialog = false;
   dialog = null;
+  openIntro = false;
 
   constructor({ viewport }) {
     makeAutoObservable(this);
@@ -58,6 +59,7 @@ class RootStore {
     this.closeSnackBar = this.closeSnackBar.bind(this);
     this.setDialog = this.setDialog.bind(this);
     this.closeDialog = this.closeDialog.bind(this);
+    this.setOpenIntro = this.setOpenIntro.bind(this);
     this.mapStore = new MapStore(viewport);
 
     setInterval(() => this.toggleFlickerSwitch(), 1000);
@@ -117,6 +119,10 @@ class RootStore {
   closeDialog() {
     this.dialog = null;
     this.openDialog = false;
+  }
+
+  setOpenIntro(open) {
+    this.openIntro = open;
   }
 }
 

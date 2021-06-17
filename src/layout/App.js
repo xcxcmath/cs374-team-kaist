@@ -22,6 +22,7 @@ import UpdateProfile from './updateProfile';
 import Login from './login';
 import SettingPanel from './setting-panel';
 import CompanionPanel from './companion-panel';
+import Intro from './intro';
 
 import useStore from '../hooks/use-store';
 
@@ -71,6 +72,7 @@ function App() {
           </IconButton>
         }
       />
+      <Intro />
       <Dialog open={openDialog} onClose={closeDialog} style={{ zIndex: 20 }}>
         {dialog?.title && <DialogTitle>{dialog.title}</DialogTitle>}
         <DialogContent>

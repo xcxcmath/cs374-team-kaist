@@ -187,9 +187,9 @@ function Map({ children }) {
             containerRef={geocoderContainerRef}
           />
         )}
-        <NavigationControl style={{ right: 10, top: 100 }} />
+        <NavigationControl style={{ right: 10, top: 150 }} />
         <GeolocateControl
-          style={{ right: 10, top: 200 }}
+          style={{ right: 10, top: 250 }}
           trackUserLocation={
             trackUserLocation && true
             //['login', 'plan', 'list-request'].findIndex((it) => it === mode) ===

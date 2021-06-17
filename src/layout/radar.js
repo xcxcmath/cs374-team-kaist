@@ -64,6 +64,21 @@ export default observer(function Radar() {
       });
       if (added) {
         setSnackBarMessage("You've just meet new crime hotspot! Please check.");
+        if ('Notification' in window) {
+          const generateNotification = () =>
+            new Notification(
+              "You've just meet new crime hotspot! Please check."
+            );
+          if (Notification.permission === 'granted') {
+            generateNotification();
+          } else if (Notification.permission !== 'denied') {
+            Notification.requestPermission().then((permission) => {
+              if (permission === 'granted') {
+                generateNotification();
+              }
+            });
+          }
+        }
       }
     } else {
       clearNear();

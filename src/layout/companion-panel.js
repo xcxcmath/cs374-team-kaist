@@ -32,6 +32,7 @@ export default observer(function CompanionPanel() {
     openCompanionPanel,
     setOpenCompanionPanel,
     setSnackBarMessage,
+    setDialog,
   } = useStore();
   const { setOtherPlan, setIsOtherPlanValid } = useStore((it) => it.mapStore);
   const [currentPlan, , ,] = useUserDatabase(userID, 'path', (text) => {
@@ -162,7 +163,37 @@ export default observer(function CompanionPanel() {
       } else {
         inside = (
           <>
-            <SwipeCard empty waiting />
+            <Typography variant="body2" color="textSecondary" gutterBottom>
+              Please wait until accepting your response.
+            </Typography>
+            <SwipeCard
+              empty
+              waiting
+              labelDeleteReqRes={'Cancel Response'}
+              onDeleteReqRes={() => {
+                setDialog(
+                  'Canceling Your Response',
+                  'Do you really want to cancel your response?',
+                  () => {},
+                  async () => {
+                    if (companion) {
+                      setCompanion(null);
+                      database.ref(`users/${companion}`).update({
+                        companion: null,
+                        companionMessage: 'deleted',
+                      });
+                      const ref = database.ref(`requests/${companion}`);
+                      const data = await ref.get();
+                      if (data.exists()) {
+                        database
+                          .ref(`requests/${companion}`)
+                          .update({ status: null });
+                      }
+                    }
+                  }
+                );
+              }}
+            />
           </>
         );
       }
@@ -170,7 +201,7 @@ export default observer(function CompanionPanel() {
       inside = (
         <>
           <Typography variant="body2" color="textSecondary" gutterBottom>
-            Your companion
+            Be happy with your companion!!
           </Typography>
           <SwipeCard
             image={thisCompanion?.entry?.profileImage}
@@ -178,6 +209,33 @@ export default observer(function CompanionPanel() {
             age={thisCompanion?.entry?.age}
             gender={thisCompanion?.entry?.gender}
             onBio={() => setOpenProfilePanel(true)}
+            onDisconnect={() => {
+              setDialog(
+                'Disconnecting Your Companion',
+                'Do you really want to disconnect companion match?',
+                () => {},
+                async () => {
+                  if (companion) {
+                    setCompanion(null);
+                    database.ref(`users/${companion}`).update({
+                      companion: null,
+                      companionMessage: 'deleted',
+                    });
+                    if (isOwnRequest) {
+                      updateOwnRequest({ status: null });
+                    } else {
+                      const ref = database.ref(`requests/${companion}`);
+                      const data = await ref.get();
+                      if (data.exists()) {
+                        database
+                          .ref(`requests/${companion}`)
+                          .update({ status: null });
+                      }
+                    }
+                  }
+                }
+              );
+            }}
             time={thisRequest?.time}
             show
           />
@@ -187,14 +245,49 @@ export default observer(function CompanionPanel() {
       // something wrong? or loading..
       inside = (
         <>
+          <Typography variant="body2" color="textSecondary" gutterBottom>
+            Please wait...
+          </Typography>
           <SwipeCard empty waiting />
         </>
       );
     }
   } else if (isOwnRequest) {
+    // waiting response
     inside = (
       <>
-        <SwipeCard empty waiting />
+        <Typography variant="body2" color="textSecondary" gutterBottom>
+          Please wait until someone else responds your request.
+        </Typography>
+        <SwipeCard
+          empty
+          waiting
+          labelDeleteReqRes={'Delete Request'}
+          onDeleteReqRes={() => {
+            setDialog(
+              'Deleting Your Request',
+              'Do you really want to delete your request?',
+              () => {},
+              async () => {
+                setOwnRequest(null);
+                if (companion) {
+                  setCompanion(null);
+                  database.ref(`users/${companion}`).update({
+                    companion: null,
+                    companionMessage: 'deleted',
+                  });
+                  const ref = database.ref(`requests/${companion}`);
+                  const data = await ref.get();
+                  if (data.exists()) {
+                    database
+                      .ref(`requests/${companion}`)
+                      .update({ status: null });
+                  }
+                }
+              }
+            );
+          }}
+        />
       </>
     );
   } else if (thisCompanion) {
@@ -220,6 +313,7 @@ export default observer(function CompanionPanel() {
       </>
     );
   } else {
+    // no more requests
     inside = (
       <>
         <SwipeCard
@@ -245,6 +339,7 @@ export default observer(function CompanionPanel() {
       setSnackBarMessage(`Response to your request is here! Please check.`);
     } else if (companionMessage === 'deleted') {
       setSnackBarMessage(`Your companion just canceled the matching with you.`);
+      setOpenProfilePanel(false);
     }
     setCompanionMessage(null);
   }, [companionMessage, setCompanionMessage, setSnackBarMessage]);

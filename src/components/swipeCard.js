@@ -59,6 +59,15 @@ export default function SwipeCard(props) {
               Waiting for responses{dotString}
             </div>
           </div>
+          <Button
+            variant="outlined"
+            size="small"
+            color="secondary"
+            onClick={props.onDeleteReqRes}
+            aria-label="delete request or response"
+          >
+            {props.labelDeleteReqRes}
+          </Button>
         </div>
       </div>
     );
@@ -209,6 +218,17 @@ export default function SwipeCard(props) {
           >
             About&nbsp;me
           </Fab>
+          {props.onDisconnect && (
+            <Fab
+              color="secondary"
+              variant="extended"
+              size="small"
+              onClick={props.onDisconnect}
+              aria-label="delete companion matching"
+            >
+              Disconnect
+            </Fab>
+          )}
         </div>
       </div>
       {props.onRight && (

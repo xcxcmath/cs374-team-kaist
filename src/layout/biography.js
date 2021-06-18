@@ -31,7 +31,7 @@ export default function Biography(props) {
     profileImage,
     phone,
     kakao,
-  } = props.companion.entry;
+  } = props.companion?.entry;
   const countryEntry = countries.find((it) => it.code === country);
   const countryString = countryEntry
     ? `${countryToFlag(countryEntry.code)} ${countryEntry.label}`
@@ -62,7 +62,7 @@ export default function Biography(props) {
   const [repDisplay, setRepDisplay] = useState(false);
   const [reportText, setReportText] = useState('');
   useEffect(() => {
-    if (userID && props.companion.id) {
+    if (userID && props.companion?.id) {
       (async () => {
         const data = await database
           .ref(`reports/${props.companion.id}/${userID}`)
@@ -74,7 +74,7 @@ export default function Biography(props) {
         }
       })();
     }
-  }, [userID, props.companion.id]);
+  }, [userID, props.companion?.id]);
   let repStyle = {
     display: 'none',
   };

@@ -20,6 +20,7 @@ import MapRoute from '../components/map-route';
 import DegreeLabel, {
   circleColors,
   circleLabelColors,
+  circleLabel,
 } from '../components/degree-label';
 
 import './map.css';
@@ -125,9 +126,13 @@ function Map({ children }) {
                 id={`crime-data-layer-${degree}-label`}
                 type="symbol"
                 layout={{
-                  'text-field': `${degree}`,
-                  'text-size': 36,
-                  'text-font': ['Roboto Bold'],
+                  'text-field': `${circleLabel[degree]}`,
+                  'text-size': 38,
+                  'text-font': [
+                    'Roboto Bold',
+                    'Open Sans Bold',
+                    'Arial Unicode MS Bold',
+                  ],
                   'text-ignore-placement': true,
                   visibility: showCircle ? 'visible' : 'none',
                 }}

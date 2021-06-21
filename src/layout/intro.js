@@ -22,7 +22,8 @@ export default observer(function Intro() {
             Crime Hotspots
           </Typography>
           <Typography variant="body1" gutterBottom>
-            You can see flickering <em>crime hotspots</em> on map.
+            You can see flickering <em>crime hotspots</em> on map. Degree of a
+            hotspot depends on overall dangerousness of the region.
           </Typography>
           <Typography variant="body2" gutterBottom>
             <DegreeLabel degree={1} flickerSwitch={flickerSwitch} /> : You may

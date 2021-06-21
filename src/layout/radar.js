@@ -64,11 +64,23 @@ export default observer(function Radar() {
       });
       if (added) {
         setSnackBarMessage("You've just meet new crime hotspot! Please check.");
-        if ('Notification' in window) {
-          const generateNotification = () =>
-            new Notification(
+        if ('Notification' in window && 'serviceWorker' in navigator) {
+          const generateNotification = () => {
+            navigator.serviceWorker.ready.then((reg) => {
+              var options = {
+                body: "You've just meet new crime hotspots! Please check.",
+                icon: 'icons/logo.jpg',
+                vibrate: [100, 100],
+                data: {
+                  dateOfArrival: Date.now(),
+                },
+              };
+              reg.showNotification('Kare Radar Warning', options);
+              /*new Notification(
               "You've just meet new crime hotspot! Please check."
-            );
+            );*/
+            });
+          };
           if (Notification.permission === 'granted') {
             generateNotification();
           } else if (Notification.permission !== 'denied') {
